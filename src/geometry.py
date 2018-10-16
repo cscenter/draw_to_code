@@ -1,3 +1,6 @@
+from math import hypot
+
+
 class Figure:
     def to_tex(self):
         raise NotImplementedError
@@ -7,6 +10,10 @@ class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    @staticmethod
+    def distance_between(p1, p2):
+        return hypot(p1.x - p2.x, p1.y - p2.y)
 
 
 class Segment(Figure):
