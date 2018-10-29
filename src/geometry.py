@@ -30,7 +30,7 @@ class Segment(Figure):
         )
 
     def to_pil(self, draw):
-        draw.line((self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y), fill=(255, 255, 255))
+        draw.line((self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y), fill=(0, 0, 0))
 
 
 class Circle(Figure):
@@ -49,4 +49,4 @@ class Circle(Figure):
         x = self.center.x
         y = self.center.y
         r = self.radius
-        draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=(255, 255, 255))
+        draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=(0, 0, 0))
