@@ -5,9 +5,9 @@ import numpy as np
 
 from geometry_generator import generate_circle
 from geometry import Circle, Point
-from pil_pic_generator import generate_pil_image
+from pil_pic_generator import generate_pil_image, save_pil_image
 
-IMAGE_SIZE = 32
+IMAGE_SIZE = 64
 
 model = keras.models.Sequential()
 model.add(L.InputLayer(input_shape=[IMAGE_SIZE, IMAGE_SIZE, 3]))
@@ -43,6 +43,7 @@ model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 X_train = []
 y_train = []
+
 for i in range(5000):
     circle = generate_circle(IMAGE_SIZE)
     im = generate_pil_image([circle], IMAGE_SIZE)
@@ -65,5 +66,5 @@ print(circle.center.y)
 print(circle.radius)
 print(result)
 
-result_im = generate_pil_image([circle, Circle(Point(result[0][0], result[0][1]), result[0][2])])
-result_im.show()
+result_im = generate_pil_image([circle, Circle(Point(result[0][0], result[0][1]), result[0][2], color=(255, 13, 13))], IMAGE_SIZE)
+save_pil_image(result_im, "test.png")

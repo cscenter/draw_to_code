@@ -17,7 +17,8 @@ class Point:
 
 
 class Segment(Figure):
-    def __init__(self, point_1, point_2):
+    def __init__(self, point_1, point_2, color=None):
+        self.color = color or (0, 0, 0)
         self.point_1 = point_1
         self.point_2 = point_2
 
@@ -30,11 +31,12 @@ class Segment(Figure):
         )
 
     def to_pil(self, draw):
-        draw.line((self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y), fill=(0, 0, 0))
+        draw.line((self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y), fill=self.color)
 
 
 class Circle(Figure):
-    def __init__(self, point, radius):
+    def __init__(self, point, radius, color=None):
+        self.color = color or (0, 0, 0)
         self.center = point
         self.radius = radius
 
@@ -49,4 +51,4 @@ class Circle(Figure):
         x = self.center.x
         y = self.center.y
         r = self.radius
-        draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=(0, 0, 0))
+        draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=self.color)
