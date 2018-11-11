@@ -17,13 +17,14 @@ class Point:
 
 
 class Segment(Figure):
-    def __init__(self, point_1, point_2, color=None):
-        self.color = color or (0, 0, 0)
+    def __init__(self, point_1, point_2, color=None, width=0):
+        self.width = width
+        self.color = color or 0
         self.point_1 = point_1
         self.point_2 = point_2
 
     def to_tex(self):
-        return "\draw ({}, {}) -- ({}, {});".format(
+        return "\\draw ({}, {}) -- ({}, {});".format(
             self.point_1.x,
             self.point_1.y,
             self.point_2.x,
@@ -31,17 +32,18 @@ class Segment(Figure):
         )
 
     def to_pil(self, draw):
-        draw.line((self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y), fill=self.color)
+        xy = (self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y)
+        draw.line(xy, fill=self.color, width=self.width)
 
 
 class Circle(Figure):
     def __init__(self, point, radius, color=None):
-        self.color = color or (0, 0, 0)
+        self.color = color or 0
         self.center = point
         self.radius = radius
 
     def to_tex(self):
-        return "\draw ({}, {}) circle ({});".format(
+        return "\\draw ({}, {}) circle ({});".format(
             self.center.x,
             self.center.y,
             self.radius

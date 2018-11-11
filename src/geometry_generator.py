@@ -1,6 +1,6 @@
 from random import uniform
 
-from geometry import *
+from geometry import Circle, Point, Segment
 
 
 def generate_circle(plot_side):

@@ -26,4 +26,11 @@ def generate_pic():
     return generate_pil_image(figures), figures
 
 
-data = [generate_pic() for _ in range(1000)]
+def get_data(size):
+    return [generate_pic() for _ in range(size)]
+
+
+def run_test(find_circle_model, get_circle_model, find_segment_model, get_segment_model):
+    data = get_data(1000)
+    
+
