@@ -8,7 +8,7 @@ class TexConverter(Converter):
     template = """
     \\begin{{tikzpicture}}
         {}
-    \end{{tikzpicture}}
+    \\end{{tikzpicture}}
     """
 
     def convert(self, figures):
