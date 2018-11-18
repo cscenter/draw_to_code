@@ -3,68 +3,44 @@ import keras.layers as L
 
 import numpy as np
 
-from geometry_generator import generate_circle
-from geometry import Circle, Point
-from pil_pic_generator import generate_pil_image, save_pil_image
+from geometry_generator import generate_circle, generate_segment
+from geometry import Circle, Point, Segment
+from pic_generator import generate_random_pic, save_pil_image, generate_pil_image
 
-IMAGE_SIZE = 64
+from models.circle import find_circle_model, get_circle_model
+from models.segment import find_segment_model, get_segment_model
 
-model = keras.models.Sequential()
-model.add(L.InputLayer(input_shape=[IMAGE_SIZE, IMAGE_SIZE, 3]))
-model.add(L.Conv2D(filters=40, kernel_size=(3, 3)))
-model.add(L.BatchNormalization())
-model.add(L.Activation('relu'))
-model.add(L.Conv2D(filters=40, kernel_size=(3, 3)))
-model.add(L.MaxPooling2D(pool_size=(2, 2)))
-model.add(L.Activation('relu'))
-model.add(L.Dropout(0.15))
 
-model.add(L.Conv2D(filters=80, kernel_size=(3, 3)))
-model.add(L.BatchNormalization())
-model.add(L.Activation('relu'))
-model.add(L.Conv2D(filters=80, kernel_size=(3, 3)))
-model.add(L.MaxPooling2D(pool_size=(2, 2)))
-model.add(L.Activation('relu'))
-model.add(L.Dropout(0.15))
+def generate_data(pics_amount, image_size, figure_class, circles_amount, segments_amount):
+    x_list = []
+    y_list  = []
 
-model.add(L.Conv2D(filters=160, kernel_size=(3, 3)))
-model.add(L.BatchNormalization())
-model.add(L.Activation('relu'))
-model.add(L.MaxPooling2D(pool_size=(2, 2)))
-model.add(L.Activation('relu'))
-model.add(L.Dropout(0.15))
+    for _ in range(pics_amount):
+        im, figures = generate_random_pic(image_size, circles_amount, segments_amount)
 
-model.add(L.Flatten())
-model.add(L.Dense(700, activation='relu'))
-model.add(L.Dropout(0.2))
-model.add(L.Dense(3))
+        for figure in figures:
+            if isinstance(figure, figure_class):
+                y = figure.get_as_y()
 
-model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+        x_list.append(np.array(im))
+        y_list.append(y)
 
-X_train = []
-y_train = []
+    X = np.array(x_list).reshape(pics_amount, image_size, image_size, 1)
+    y = np.array(y_list)
 
-for i in range(5000):
-    circle = generate_circle(IMAGE_SIZE)
-    im = generate_pil_image([circle], IMAGE_SIZE)
-    x, y = np.array(im), np.array([circle.center.x, circle.center.y, circle.radius])
-    X_train.append(x)
-    y_train.append(y)
+    return X, y, figures
 
-X_train = np.array(X_train)
-y_train = np.array(y_train)
 
+image_size = 32
+X_train, y_train, figures_train = generate_data(12000, image_size, Segment, 0, 1)
+X_test, y_test, figures_test = generate_data(10, image_size, Segment, 1, 1)
+
+model = get_segment_model(image_size)
 model.fit(X_train, y_train, epochs=3)
 
-circle = generate_circle(IMAGE_SIZE)
-im = generate_pil_image([circle], IMAGE_SIZE)
-x = np.array([np.array(im)])
-result = model.predict(x)
+res = model.predict(X_test)
+segment = Segment.construct_from_y(res[0])
+segment.color = 128
 
-print(circle.center.x)
-print(circle.center.y)
-print(circle.radius)
-print(result)
-
-result_im = generate_pil_image([circle, Circle(Point(result[0][0], result[0][1]), result[0][2], color=(255, 13, 13))], IMAGE_SIZE)
-save_pil_image(result_im, "test.png")
+result_im = generate_pil_image(figures_test + [segment], image_size)
+save_pil_image(result_im, "test")

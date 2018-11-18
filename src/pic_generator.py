@@ -21,7 +21,7 @@ def save_pil_image(pil_image, path):
     pil_image.save(path + ".png")
 
 
-def generate_random_pic(image_size, circles_amount, segments_amount, triangles_amount):
+def generate_random_pic(image_size, circles_amount=0, segments_amount=0, triangles_amount=0):
     figures = []
 
     for _ in range(circles_amount):

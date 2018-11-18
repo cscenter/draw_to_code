@@ -1,8 +1,16 @@
 from math import atan2, hypot, pi, sin, cos
 
+import numpy as np
+
 
 class Figure:
     def to_tex(self):
+        raise NotImplementedError
+
+    def to_pil(self):
+        raise NotImplementedError
+
+    def get_as_y(self):
         raise NotImplementedError
 
 
@@ -57,6 +65,15 @@ class Segment(Figure):
         point_2 = Point(point.x + d_x, point.y + d_y)
         return Segment(point_1, point_2, color, width)
 
+    def get_as_y(self):
+        middle_point = self.get_middle()
+        return np.array([middle_point.x,middle_point.y, self.get_angle(), self.get_length()])
+
+    @staticmethod
+    def construct_from_y(y):
+        point = Point(y[0], y[1])
+        return Segment.segment_by_point_angle_length(point, y[2], y[3])
+
 
 class Circle(Figure):
     def __init__(self, point, radius, color=None):
@@ -76,3 +93,10 @@ class Circle(Figure):
         y = self.center.y
         r = self.radius
         draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=self.color)
+
+    def get_as_y(self):
+        return np.array([self.center.x, self.center.y, self.radius])
+
+    @staticmethod
+    def construct_from_y(y):
+        return Circle(Point(y[0], y[1]), y[2])
