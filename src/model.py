@@ -37,7 +37,7 @@ class Model:
     def get_circle(self, im):
         x = self._im_to_x(im)
         res = self.get_circle_model.predict(x)
-        return Circle(Point(res[0][0], res[0][1]), res[0][2], color=256)
+        return Circle(Point(res[0][0], res[0][1]), res[0][2])
 
     def find_segment(self, im):
         x = self._im_to_x(im)
@@ -47,7 +47,7 @@ class Model:
     def get_segment(self, im):
         x = self._im_to_x(im)
         res = self.get_circle_model.predict(x)
-        return Segment(Point(res[0][0], res[0][1]), Point(res[0][2], res[0][3]), color=256)
+        return Segment(Point(res[0][0], res[0][1]), Point(res[0][2], res[0][3]))
     
     def _get_new_image(self, im, figure):
         figure_image = pic_generator.generate_pil_image([figure], self.image_size)

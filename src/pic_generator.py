@@ -5,7 +5,7 @@ from PIL import Image, ImageChops, ImageDraw
 from geometry_generator import generate_triangle, generate_segment, generate_circle
 
 
-def generate_pil_image(figures_list, image_side, background_color=256):
+def generate_pil_image(figures_list, image_side, background_color=255):
     im = Image.new('L', (image_side, image_side), background_color)
     draw = ImageDraw.Draw(im)
     for figure in figures_list:

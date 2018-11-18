@@ -25,9 +25,9 @@ class Point:
 
 
 class Segment(Figure):
-    def __init__(self, point_1, point_2, color=None, width=0):
+    def __init__(self, point_1, point_2, color=0, width=0):
         self.width = width
-        self.color = color or 0
+        self.color = color
         self.point_1 = point_1
         self.point_2 = point_2
 
@@ -58,7 +58,7 @@ class Segment(Figure):
         return Point.distance_between(self.point_1, self.point_2)
 
     @staticmethod
-    def segment_by_point_angle_length(point, angle, length, color=None, width=0):
+    def segment_by_point_angle_length(point, angle, length, color=0, width=0):
         d_x = length / 2 * cos(angle)
         d_y = length / 2 * sin(angle)
         point_1 = Point(point.x - d_x, point.y - d_y)
@@ -76,8 +76,8 @@ class Segment(Figure):
 
 
 class Circle(Figure):
-    def __init__(self, point, radius, color=None):
-        self.color = color or 0
+    def __init__(self, point, radius, color=0):
+        self.color = color
         self.center = point
         self.radius = radius
 
