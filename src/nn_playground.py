@@ -31,15 +31,19 @@ def generate_data(pics_amount, image_size, figure_class, circles_amount, segment
     return X, y, figures
 
 
-image_size = 32
-X_train, y_train, figures_train = generate_data(12000, image_size, Segment, 0, 1)
-X_test, y_test, figures_test = generate_data(10, image_size, Segment, 1, 1)
+image_size = 50
+
+X_train, y_train, figures_train = generate_data(1000, image_size, Segment, 0, 1)
+X_test, y_test, figures_test = generate_data(1, image_size, Segment, 0, 1)
 
 model = get_segment_model(image_size)
-model.fit(X_train, y_train, epochs=3)
+model.fit(X_train, y_train, epochs=5)
+# model.save_weights("get_segment_model_simple_new.h5")
 
 res = model.predict(X_test)
-segment = Segment.construct_from_y(res[0])
+res = res[0]
+# res = [res[0], res[1], res[3]]
+segment = Segment.construct_from_y(res)
 segment.color = 128
 
 result_im = generate_pil_image(figures_test + [segment], image_size)
