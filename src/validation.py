@@ -20,7 +20,7 @@ def generate_data(pics_amount, image_size, figure_class, circles_amount, segment
 
         for figure in figures:
             if isinstance(figure, figure_class):
-                y = figure.get_as_y()
+                y = figure.get_as_y(image_size)
 
         x_list.append(np.array(im))
         y_list.append(y)
@@ -31,18 +31,18 @@ def generate_data(pics_amount, image_size, figure_class, circles_amount, segment
     return X, y, figures
 
 
-image_size = 50
-model = get_segment_model(image_size)
-model.load_weights("get_segment_model_simple_new.h5")
+image_size = 100
+model = get_circle_model(image_size)
+model.load_weights("get_circle.h5")
 
 for i in range(10):
-    X_test, y_test, figures_test = generate_data(1, image_size, Segment, 0, 1)
+    X_test, y_test, figures_test = generate_data(1, image_size, Circle, 1, 5)
 
     res = model.predict(X_test)
     res = res[0]
     # res = [res[0], res[1], res[3]]
-    segment = Segment.construct_from_y(res)
+    segment = Circle.construct_from_y(res, image_size)
     segment.color = 128
 
     result_im = generate_pil_image(figures_test + [segment], image_size)
-    save_pil_image(result_im, "test_{}".format(i))
+    save_pil_image(result_im, "pics/test_{}".format(i))

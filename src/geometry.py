@@ -10,7 +10,7 @@ class Figure:
     def to_pil(self):
         raise NotImplementedError
 
-    def get_as_y(self):
+    def get_as_y(self, image_size):
         raise NotImplementedError
 
 
@@ -65,12 +65,19 @@ class Segment(Figure):
         point_2 = Point(point.x + d_x, point.y + d_y)
         return Segment(point_1, point_2, color, width)
 
-    def get_as_y(self):
+    def get_as_y(self, image_size):
         middle_point = self.get_middle()
-        return np.array([middle_point.x,middle_point.y, self.get_angle(), self.get_length()])
+        y = np.array([middle_point.x, middle_point.y, self.get_angle(), self.get_length()])
+        y[0] /= image_size
+        y[1] /= image_size
+        y[3] /= (image_size * 1.4)  # sqrt(2)
+        return y
 
     @staticmethod
-    def construct_from_y(y):
+    def construct_from_y(y, image_size):
+        y[0] *= image_size
+        y[1] *= image_size
+        y[3] *= (image_size * 1.4)  # sqrt(2)
         point = Point(y[0], y[1])
         return Segment.segment_by_point_angle_length(point, y[2], y[3])
 
@@ -94,9 +101,20 @@ class Circle(Figure):
         r = self.radius
         draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=self.color)
 
-    def get_as_y(self):
-        return np.array([self.center.x, self.center.y, self.radius])
+    def get_as_y(self, image_size):
+        y = np.array([
+            self.center.x / image_size,
+            self.center.y / image_size,
+            self.radius / image_size * 2
+        ])
+        return y
 
     @staticmethod
-    def construct_from_y(y):
-        return Circle(Point(y[0], y[1]), y[2])
+    def construct_from_y(y, image_size):
+        return Circle(
+            Point(
+                y[0] * image_size,
+                y[1] * image_size
+            ),
+            y[2] * image_size / 2
+        )
