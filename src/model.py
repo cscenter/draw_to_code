@@ -9,7 +9,7 @@ from geometry import Circle, Segment, Point
 class Model:
     def __init__(self, image_size):
         self.image_size = image_size
-        self._load_weights
+        self._load_weights()
 
     def _load_weights(self):
         image_size = self.image_size
@@ -25,37 +25,37 @@ class Model:
 
         self.get_segment_model = segment_model.get_segment_model(image_size)
         self.get_segment_model.load_weights("get_segment_model.h5")
-    
+
     def _im_to_x(self, im):
         return np.array([np.array(im)]).reshape(1, self.image_size, self.image_size, 1)
 
     def find_circle(self, im):
         x = self._im_to_x(im)
-        res = self.find_circle_model.predict(x)
+        res = self.find_circle_model.predict_classes(x)
         return res[0] == 1
 
     def get_circle(self, im):
         x = self._im_to_x(im)
         res = self.get_circle_model.predict(x)
-        return Circle(Point(res[0][0], res[0][1]), res[0][2])
+        return Circle.construct_from_y(res[0], self.image_size)
 
     def find_segment(self, im):
         x = self._im_to_x(im)
-        res = self.find_segment_model.predict(x)
+        res = self.find_segment_model.predict_classes(x)
         return res[0] == 1
-    
+
     def get_segment(self, im):
         x = self._im_to_x(im)
         res = self.get_circle_model.predict(x)
-        return Segment(Point(res[0][0], res[0][1]), Point(res[0][2], res[0][3]))
-    
+        return Segment.construct_from_y(res[0], self.image_size)
+
     def _get_new_image(self, im, figure):
         figure_image = pic_generator.generate_pil_image([figure], self.image_size)
         return pic_generator.subtract_image(im, figure_image)
 
     def solve(self, image):
         im = image.copy()
-        
+
         circles = []
         while self.find_circle(im):
             circle = self.get_circle(im)
@@ -67,5 +67,5 @@ class Model:
             segment = self.get_segment(im)
             segments.append(segment)
             im = self._get_new_image(im, segment)
-        
+
         return [*circles, *segments]
