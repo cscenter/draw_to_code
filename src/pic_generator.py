@@ -14,11 +14,17 @@ def generate_pil_image(figures_list, image_side, background_color=255):
 
 
 def subtract_image(image1, image2):
-    return ImageChops.add(image1, image2)
+    return ImageChops.lighter(image1, ImageChops.invert(image2))
 
 
 def save_pil_image(pil_image, path):
     pil_image.save(path + ".png")
+
+
+def load_image(image_path):
+    image = Image.open(image_path)
+    threshold = 200
+    return image.convert('L').point(lambda x : 255 if x > threshold else 0, mode='1')
 
 
 def generate_random_pic(image_size, circles_amount=0, segments_amount=0, triangles_amount=0):

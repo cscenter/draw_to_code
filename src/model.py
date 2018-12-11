@@ -46,26 +46,51 @@ class Model:
 
     def get_segment(self, im):
         x = self._im_to_x(im)
-        res = self.get_circle_model.predict(x)
+        res = self.get_segment_model.predict(x)
         return Segment.construct_from_y(res[0], self.image_size)
 
     def _get_new_image(self, im, figure):
-        figure_image = pic_generator.generate_pil_image([figure], self.image_size)
-        return pic_generator.subtract_image(im, figure_image)
+        if isinstance(figure, Circle):
+            radius = figure.radius
+            for delta in range(-5, 6):
+                figure.radius = radius + delta
+                figure_image = pic_generator.generate_pil_image([figure], self.image_size)
+                im = pic_generator.subtract_image(im, figure_image)
+        else:
+            figure_image = pic_generator.generate_pil_image([figure], self.image_size)
+            im = pic_generator.subtract_image(im, figure_image)
+        return im
 
     def solve(self, image):
+        MAX_ITERATIONS = 5
         im = image.copy()
+        images = [im]
 
         circles = []
+        iterations = 0
         while self.find_circle(im):
+            if iterations == MAX_ITERATIONS:
+                break
+            iterations += 1
+            print(1)
             circle = self.get_circle(im)
             circles.append(circle)
+            images.append(pic_generator.generate_pil_image([circle], self.image_size))
             im = self._get_new_image(im, circle)
+            images.append(im)
 
         segments = []
+        iterations = 0
         while self.find_segment(im):
+            if iterations == MAX_ITERATIONS:
+                break
+            iterations += 1
+            print(2)
             segment = self.get_segment(im)
+            segment.width = 8
             segments.append(segment)
+            images.append(pic_generator.generate_pil_image([segment], self.image_size))
             im = self._get_new_image(im, segment)
+            images.append(im)
 
-        return [*circles, *segments]
+        return circles, segments, images

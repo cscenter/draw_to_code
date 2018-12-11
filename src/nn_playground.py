@@ -19,8 +19,8 @@ def generate_data(pics_amount, image_size, figure_class, circles_amount, segment
     y_is_fig_here_list = []
 
     for _ in range(pics_amount):
-        circles_amount = randint(0, 5)
-        segments_amount = randint(0, 5)
+        circles_amount = randint(0, 3)
+        segments_amount = randint(0, 3)
         im, figures = generate_random_pic(image_size, circles_amount, segments_amount)
 
         is_fig_here = 0
@@ -43,17 +43,14 @@ def generate_data(pics_amount, image_size, figure_class, circles_amount, segment
 
 image_size = 100
 
-X_train, y_train, y_is_fig_here, figures_train = generate_data(200000, image_size, Segment, 1, 5)
+X_train, y_train, y_is_fig_here, figures_train = generate_data(600000, image_size, Segment, 1, 1)
 
-print(y_is_fig_here[0])
-
-# model = get_circle_model(image_size)
-# model.fit(X_train, y_train, epochs=3)
-# model.save_weights("get_circle.h5")
+# model = get_segment_model(image_size)
+# model.fit(X_train, y_train, epochs=5)
+# model.save_weights("get_segment_model.h5")
 # print(np.shape(y_train))
 # print(np.shape(y_is_fig_here))
 
 model = find_segment_model(image_size)
 model.fit(X_train, y_is_fig_here, epochs=5)
-print(model.predict_classes(np.array([X_train[0]])))
-model.save_weights("find_circle.h5")
+model.save_weights("find_segment_model.h5")
