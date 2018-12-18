@@ -1,6 +1,8 @@
 import os
+import random
 
 from PIL import Image, ImageChops, ImageDraw
+import numpy as np
 
 from geometry_generator import generate_triangle, generate_segment, generate_circle
 
@@ -11,6 +13,14 @@ def generate_pil_image(figures_list, image_side, background_color=255):
     for figure in figures_list:
         figure.to_pil(draw)
     return im
+
+
+def add_noise(im):
+    arr = np.array(im)
+    mask = np.random.rand(*arr.shape)
+    arr[mask < 0.05] = 0
+    arr[mask > 0.95] = 255
+    return Image.fromarray(arr)
 
 
 def subtract_image(image1, image2):
