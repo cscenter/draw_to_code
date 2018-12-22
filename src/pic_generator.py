@@ -15,11 +15,11 @@ def generate_pil_image(figures_list, image_side, background_color=255):
     return im
 
 
-def add_noise(im):
+def add_noise(im, threshold=0.05):
     arr = np.array(im)
     mask = np.random.rand(*arr.shape)
-    arr[mask < 0.05] = 0
-    arr[mask > 0.95] = 255
+    arr[mask < threshold] = 0
+    arr[mask > 1 - threshold] = 255
     return Image.fromarray(arr)
 
 
