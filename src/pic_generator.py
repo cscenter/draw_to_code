@@ -33,8 +33,22 @@ def save_pil_image(pil_image, path):
 
 def load_image(image_path):
     image = Image.open(image_path)
-    threshold = 200
-    return image.convert('L').point(lambda x : 255 if x > threshold else 0, mode='1')
+    threshold = 180
+    return image.convert('L').point(lambda x : 255 if x > threshold else 0)
+
+
+def image_to_square(image, size, background_color=255):
+    image_size = image.size
+    width = image_size[0]
+    height = image_size[1]
+
+    bigside = width if width > height else height
+
+    background = Image.new('L', (bigside, bigside), background_color)
+    offset = (int(round(((bigside - width) / 2), 0)), int(round(((bigside - height) / 2), 0)))
+
+    background.paste(image, offset)
+    return background.resize((size, size))
 
 
 def generate_random_pic(image_size, circles_amount=0, segments_amount=0, triangles_amount=0):

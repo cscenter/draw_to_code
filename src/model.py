@@ -10,6 +10,8 @@ class Model:
     def __init__(self, image_size):
         self.image_size = image_size
         self._load_weights()
+        self.circle_double_width = 4
+        self.segment_width = 8
 
     def _load_weights(self):
         image_size = self.image_size
@@ -52,7 +54,7 @@ class Model:
     def _get_new_image(self, im, figure):
         if isinstance(figure, Circle):
             radius = figure.radius
-            for delta in range(-5, 6):
+            for delta in range(-self.circle_double_width, self.circle_double_width + 1):
                 figure.radius = radius + delta
                 figure_image = pic_generator.generate_pil_image([figure], self.image_size)
                 im = pic_generator.subtract_image(im, figure_image)
@@ -72,7 +74,6 @@ class Model:
             if iterations == MAX_ITERATIONS:
                 break
             iterations += 1
-            print(1)
             circle = self.get_circle(im)
             circles.append(circle)
             images.append(pic_generator.generate_pil_image([circle], self.image_size))
@@ -85,9 +86,8 @@ class Model:
             if iterations == MAX_ITERATIONS:
                 break
             iterations += 1
-            print(2)
             segment = self.get_segment(im)
-            segment.width = 8
+            segment.width = self.segment_width
             segments.append(segment)
             images.append(pic_generator.generate_pil_image([segment], self.image_size))
             im = self._get_new_image(im, segment)
