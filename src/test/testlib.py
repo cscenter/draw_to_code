@@ -1,0 +1,3 @@
+class TestNotPassed(BaseException):
+    pass
+
