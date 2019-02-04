@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from geometry import Point, Segment, Circle
+from geometry import Point, Segment, Circle, Line
 import pic_generator
 from latex_pic_generator import convert_to_latex
 
@@ -22,6 +22,12 @@ def find_segments_opencv_probalistic(image, params=STD_PARAMS_SEGMENT_OPENCV_PRO
 def find_lines_opencv(image, params):
     ro_step, theta_step, threshold = params
     lines = cv2.HoughLines(image, ro_step, theta_step, threshold)
+    result = []
+    for line in lines:
+        ro, theta = line[0]
+        result.append(Line.line_by_ro_theta(ro, theta))
+    return result
+
 
 def find_and_draw_segments(image, params, pic_size,
                            filename="hough_result",
