@@ -137,14 +137,14 @@ class Line(Figure):
             return None
         else:
             return Point(
-                (l1.c*l2.a - l2.c*l1.a) / (l1.b*l2.a - l2.b*l1.a),
-                (l1.c*l2.b - l2.c*l1.b) / (l1.a*l2.b - l2.a*l1.b)
+                (l1.c*l2.b - l2.c*l1.b) / (l1.a*l2.b - l2.a*l1.b),
+                (l1.c*l2.a - l2.c*l1.a) / (l1.b*l2.a - l2.b*l1.a)
             )
 
     def dist_to_point(self, point):
-        x, y = point.x, point.y
         a, b, c = self.a, self.b, self.c
-        return abs(a*(x - c/a) + b*y)/np.sqrt(a*a + b*b)
+        x, y = point.x, point.y
+        return abs(a*x + b*y - c)/np.sqrt(a*a + b*b)
 
     @staticmethod
     def line_by_ro_theta(ro, theta):
