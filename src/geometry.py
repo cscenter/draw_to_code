@@ -123,6 +123,15 @@ class Circle(Figure):
         )
 
 
+def angle(p : Point):  # angle between p and OX
+    if p.x > 0:
+        return np.arctan(p.y / p.x)
+    if p.x < 0:
+        return angle(Point(-p.x, -p.y)) + np.pi
+    if p.x == 0:
+        return np.pi/2 if p.y >= 0 else -np.pi/2
+
+
 class Line(Figure):
     # ax + by = c
     def __init__(self, a, b, c):
@@ -141,7 +150,7 @@ class Line(Figure):
                 (l1.c*l2.a - l2.c*l1.a) / (l1.b*l2.a - l2.b*l1.a)
             )
 
-    def dist_to_point(self, point):
+    def dist_to_point(self, point : Point):
         a, b, c = self.a, self.b, self.c
         x, y = point.x, point.y
         return abs(a*x + b*y - c)/np.sqrt(a*a + b*b)
@@ -154,7 +163,8 @@ class Line(Figure):
         return self.dist_to_point(Point(0, 0))
 
     def theta(self):
-        return np.arctan(self.b / self.a)
+        p = Line.cross(self, Line(-self.b, self.a, 0))
+        return angle(p)
 
     def to_pil(self, draw, img_size, color=0):
         if abs(self.a) < abs(self.b): #more horisontal line
@@ -162,7 +172,7 @@ class Line(Figure):
             right = Line(0, 1, img_size)
             p1 = Line.cross(self, left)
             p2 = Line.cross(self, right)
-        else: # more vertical line
+        else:  # more vertical line
             down = Line(1, 0, 0)
             up = Line(1, 0, img_size)
             p1 = Line.cross(self, down)
