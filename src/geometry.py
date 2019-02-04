@@ -23,6 +23,9 @@ class Point:
     def distance_between(p1, p2):
         return hypot(p1.x - p2.x, p1.y - p2.y)
 
+    def len(self):
+        return Point.distance_between(self, Point(0, 0))
+
 
 class Segment(Figure):
     def __init__(self, point_1, point_2, color=0, width=0):
@@ -118,3 +121,63 @@ class Circle(Figure):
             ),
             y[2] * image_size / 2
         )
+
+
+def angle(p : Point):  # angle between p and OX
+    if p.x > 0:
+        return np.arctan(p.y / p.x)
+    if p.x < 0:
+        return angle(Point(-p.x, -p.y)) + np.pi
+    if p.x == 0:
+        return np.pi/2 if p.y >= 0 else -np.pi/2
+
+
+class Line(Figure):
+    # ax + by = c
+    def __init__(self, a, b, c):
+        self.a = a
+        self.b = b
+        self.c = c
+
+
+    @staticmethod
+    def cross(l1, l2):
+        if l1.a*l2.b == l2.a*l1.b:
+            return None
+        else:
+            return Point(
+                (l1.c*l2.b - l2.c*l1.b) / (l1.a*l2.b - l2.a*l1.b),
+                (l1.c*l2.a - l2.c*l1.a) / (l1.b*l2.a - l2.b*l1.a)
+            )
+
+    def dist_to_point(self, point : Point):
+        a, b, c = self.a, self.b, self.c
+        x, y = point.x, point.y
+        return abs(a*x + b*y - c)/np.sqrt(a*a + b*b)
+
+    @staticmethod
+    def line_by_ro_theta(ro, theta):
+        return Line(np.cos(theta), np.sin(theta), ro)
+
+    def ro(self):
+        return self.dist_to_point(Point(0, 0))
+
+    def theta(self):
+        p = Line.cross(self, Line(-self.b, self.a, 0))
+        return angle(p)
+
+    def to_pil(self, draw, img_size, color=0):
+        if abs(self.a) < abs(self.b): #more horisontal line
+            left = Line(0, 1, 0)
+            right = Line(0, 1, img_size)
+            p1 = Line.cross(self, left)
+            p2 = Line.cross(self, right)
+        else:  # more vertical line
+            down = Line(1, 0, 0)
+            up = Line(1, 0, img_size)
+            p1 = Line.cross(self, down)
+            p2 = Line.cross(self, up)
+        Segment(p1, p2, color=color).to_pil(draw)
+
+
+
