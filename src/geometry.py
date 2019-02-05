@@ -157,7 +157,14 @@ class Line(Figure):
 
     @staticmethod
     def line_by_ro_theta(ro, theta):
-        return Line(np.cos(theta), np.sin(theta), ro)
+        return Line(np.sin(theta), np.cos(theta), ro)
+
+    @staticmethod
+    def line_by_two_points(p1 : Point, p2 : Point):
+        dir = Point(p2.x - p1.x, p2.y - p1.y)
+        a, b = -dir.y, dir.x
+        c = a*p1.x + b*p1.y
+        return Line(a, b, c)
 
     def ro(self):
         return self.dist_to_point(Point(0, 0))
