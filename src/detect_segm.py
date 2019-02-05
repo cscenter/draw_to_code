@@ -80,8 +80,8 @@ def count_proc(P, Q, image):
     return proc
 
 
-image = io.imread('test_images/big6.bmp')
-# io.imshow(image)
+image = io.imread('test_images/big5.bmp')
+#io.imshow(image)
 coords = corner_peaks(corner_harris(image), min_distance=15)
 coords_subpix = corner_subpix(image, coords, window_size=13)
 # plt.show()
@@ -126,7 +126,7 @@ for (proc, i1, i2) in list_of_proc:
     i1 = int(i1)
     i2 = int(i2)
     if proc > bound_fin:
-        #print("seg", i1, i2, coords[:, 0][i1], coords[:, 1][i1], coords[:, 0][i2], coords[:, 1][i2])
+        print("seg", i1, i2, coords[:, 0][i1], coords[:, 1][i1], coords[:, 0][i2], coords[:, 1][i2])
         #rr, cc = line(coords[:, 0][i1], coords[:, 1][i1], coords[:, 0][i2], coords[:, 1][i2])
         #img[rr, cc] = 100
         point1 = Point(coords[:, 0][i1], coords[:, 1][i1])
@@ -148,14 +148,14 @@ for Seg in segm_init:
         if new_dist < min_dist:
             min_dist = new_dist
             num_line = i
-    if min_dist < 5:
+    if min_dist < 8:
         seg_for_each_line[num_line].add((Seg.point_1.x, Seg.point_1.y))
         seg_for_each_line[num_line].add((Seg.point_2.x, Seg.point_2.y))
     else:
-        if count_proc(P, Q, image) > 0.3:
+        procc = count_proc(Seg.point_1, Seg.point_2, image)
+        if procc > 0.3:
             segm_final.append(Seg)
-        #print((Seg.point_1.x, Seg.point_1.y, Seg.point_2.x, Seg.point_2.y))
-
+            #print("spec", procc, (Seg.point_1.x, Seg.point_1.y, Seg.point_2.x, Seg.point_2.y))
 for i in range(len(list_of_lines)):
     curlist = list(seg_for_each_line[i])
     if len(curlist) == 0:
