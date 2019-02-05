@@ -26,6 +26,23 @@ class Point:
     def len(self):
         return Point.distance_between(self, Point(0, 0))
 
+    def __add__(self, other):
+        assert isinstance(other, Point)
+        return Point(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        assert isinstance(other, Point)
+        return Point(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, other):
+        if isinstance(other, Point):
+            return self.x*other.x + self.y*other.y
+        else:
+            return Point(self.x*other, self.y*other)
+
+    def norm(self):
+        return self*(1/self.len())
+
 
 class Segment(Figure):
     def __init__(self, point_1, point_2, color=0, width=0):
@@ -174,7 +191,7 @@ class Line(Figure):
         return angle(p)
 
     def to_pil(self, draw, img_size, color=0):
-        if abs(self.a) < abs(self.b): #more horisontal line
+        if abs(self.a) > abs(self.b): #more horisontal line
             left = Line(0, 1, 0)
             right = Line(0, 1, img_size)
             p1 = Line.cross(self, left)
@@ -186,5 +203,38 @@ class Line(Figure):
             p2 = Line.cross(self, up)
         Segment(p1, p2, color=color).to_pil(draw)
 
+    def cross_with_rect(self, p1 : Point, p2 : Point):
+        x1, y1, x2, y2 = p1.x, p1.y, p2.x, p2.y
+        if x1 > x2:
+            x1, x2 = x2, x1
+        if y1 > y2:
+            y1, y2 = y2, y1
+
+        sides = [Line(1, 0, x1), Line(0, 1, y1),
+                 Line(1, 0, x2), Line(0, 1, y2)]
+        good_points = []
+        for side in sides:
+            try:
+                point = Line.cross(self, side)
+                if x1 <= point.x <= x2 and y1 <= point.y <= y2:
+                    good_points.append(point)
+            except ZeroDivisionError:
+                pass
+
+
+        if len(good_points) == 0:
+            return None
+
+        start_point = good_points[0]
+        end_point = None
+        for point in good_points:
+            if point.x != start_point.x or point.y != start_point.y:
+                end_point = point
+                break
+
+        if end_point is None:
+            return None
+        else:
+            return Segment(start_point, end_point)
 
 
