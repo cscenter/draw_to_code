@@ -8,21 +8,8 @@ from PIL import ImageOps
 from geometry import Point, Segment, Circle, Line
 import pic_generator
 
-STD_PARAMS_SEGMENT_OPENCV_PROB = (1, np.pi/180, 20, 20, 30)
-
-STD_PARAMS_LINES_SKIMAGE = (2, 7, 40, 20)
-STD_PARAMS_SEGMENTS_SKIMAGE = (*STD_PARAMS_LINES_SKIMAGE, 30, 2, 300)
-
-# deprecated, worse than new methods
-def find_segments_opencv_probalistic(image, params=STD_PARAMS_SEGMENT_OPENCV_PROB):
-    ro_step, theta_step, threshold, min_len, max_len = params
-    segments = cv2.HoughLinesP(image, ro_step, theta_step, threshold, min_len, max_len)
-    result = []
-    for segl in segments:
-        x1, y1, x2, y2 = segl[0]
-        result.append(Segment(Point(x1, y1), Point(x2, y2)))
-    return result
-
+STD_PARAMS_LINES_SKIMAGE = (30, 10, 15, 10)
+STD_PARAMS_SEGMENTS_SKIMAGE = (*STD_PARAMS_LINES_SKIMAGE, 40, 1, 500)
 
 """
 ARGUMENTS:
@@ -99,60 +86,3 @@ def find_segments(image, params=STD_PARAMS_SEGMENTS_SKIMAGE):
                 strick = 0
             cur = cur + dir
     return ans
-
-
-def segments_error(predict, answer, max_penalty):
-    res = 0
-
-    for p in predict:
-        best = np.inf
-        for a in answer:
-            dist = Segment.difference(p, a)
-            best = min(best, dist)
-        res += min(best, max_penalty)
-
-    for p in answer:
-        best = np.inf
-        for a in predict:
-            dist = Segment.difference(p, a)
-            best = min(best, dist)
-        res += min(best, max_penalty)
-
-    return res
-
-
-def find_segments_fit(im_size, epochs, tests_in_epoch, max_penalty):
-    params_variants = [
-        [0, 1, 2, 3, 5, 7, 10, 12, 15, 20, 30], # min dist
-        [0, 1, 2, 3, 5, 7, 10, 12, 15, 20, 25], # min angle
-        [0, 2, 3, 5, 7, 10, 15, 20, 25, 30, 40, 50, 70, 100], # threshold hough
-        [5, 10, 20, 30, 40], # num peaks
-        [3, 5, 7, 10, 15, 20, 30, 40, 50, 70, 100], # min seg len
-        [0, 1, 2, 3], # window size
-        [200, 300, 400, 500, 800, 1000, 1500] # threshold seg
-    ]
-
-    best_error = np.inf
-    best_params = None
-    for i in range(epochs):
-        params = [choice(vars) for vars in params_variants]
-        error = 0
-        for j in range(tests_in_epoch):
-            pic, ans = pic_generator.generate_random_pic(im_size,
-                                                         segments_amount=randint(0, 5),
-                                                         circles_amount=randint(0, 3))
-            ans = [a for a in ans if isinstance(a, Segment)]
-            nimage = np.array(ImageOps.invert(pic))
-            predict = find_segments(nimage, params)
-            error += segments_error(predict, ans, max_penalty)
-
-        if error < best_error:
-            best_error = error
-            best_params = params
-            print("New best result:", best_error, best_params)
-        print(i, "-th epoch complete")
-    return best_params, best_error
-
-
-if __name__ == "__main__":
-    print(find_segments_fit(200, 10**4, 100, 100))

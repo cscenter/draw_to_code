@@ -10,26 +10,8 @@ import pic_generator
 from latex_pic_generator import convert_to_latex
 
 import hough
-from hough import find_lines, find_segments, find_segments_opencv_probalistic
-
-
-def find_and_draw_segments(image, params, pic_size,
-                           filename="hough_result"):
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image = cv2.threshold(image, 50, 255, cv2.THRESH_BINARY_INV)[1]
-    segments = find_segments_opencv_probalistic(image, params)
-    res_pic = pic_generator.generate_pil_image(segments, pic_size)
-    pic_generator.save_pil_image(res_pic, "pics/{}".format(filename))
-    print(convert_to_latex(segments))
-
-
-def test_prob_hough():
-    pic_size = 400
-    in_image = pic_generator.generate_random_pic(pic_size, 0, 5, 0)[0]
-    pic_generator.save_pil_image(in_image, "pics/hough_test_input")
-    img = cv2.imread("pics/hough_test_input.png")
-    find_and_draw_segments(img, hough.STD_PARAMS_SEGMENT_OPENCV_PROB, pic_size)
-
+import fit_hough
+from hough import find_lines, find_segments
 
 def save_array_as_image(array: np.array, path):
     mean = array.mean()
@@ -84,5 +66,14 @@ def test_segments(filename):
     pic_generator.save_pil_image(out_im, "../../pics/hough_test_output")
 
 
+def draw_answer(test_num):
+    segs = fit_hough.load_segments_list("../../pics/ans{}.txt".format(test_num))
+    out_im = Image.new('L', (200, 200), 255)
+    draw = ImageDraw.Draw(out_im)
+    for s in segs:
+        s.to_pil(draw)
+    pic_generator.save_pil_image(out_im, "../../pics/kek_test_output")
+
+
 if __name__ == "__main__":
-    test_segments("output.bmp")
+    test_segments("train4.bmp")
