@@ -21,17 +21,16 @@ params: min_dist, min_angel, threshold, num_peaks
     num_peaks: maximum amount of picked line
     
 RETURN: three arrays - result, accum and hspace
-result: list of Line objects - founded lines 
+lines: list of Line objects - founded lines 
 accum: "brightnesses" of lines
 hspace: hough space
 """
-def find_lines(image, params = STD_PARAMS_LINES_SKIMAGE):
-    min_dist, min_angle, threshold, num_peaks = params
+def find_lines(image, min_dist=30, min_angle=10, threshold=15, num_peaks=10):
     hspace, angels, distances = hough_line(image)
     accum, thetas, ros = hough_line_peaks(hspace, angels, distances,
                                           min_dist, min_angle, threshold, num_peaks)
-    result = [Line.line_by_ro_theta(ros[i], thetas[i]) for i in range(len(ros))]
-    return result, accum, hspace
+    lines = [Line.line_by_ro_theta(ros[i], thetas[i]) for i in range(len(ros))]
+    return lines, accum, hspace
 
 
 """
@@ -45,9 +44,9 @@ params: min_dist, min_angel, thr_hough, num_peaks, min_segment_len, window_size,
 
 RETURN: list of Segment objects - segments on a picture
 """
-def find_segments(image, params=STD_PARAMS_SEGMENTS_SKIMAGE):
-    min_dist, min_angel, thr_hough, num_peaks, min_segment_len, window_size, thr_segs = params
-    lines = find_lines(image, (min_dist, min_angel, thr_hough, num_peaks))[0]
+def find_segments(image, min_dist=30, min_angel=10, thr_hough=15, num_peaks=10,
+                  min_segment_len=40, window_size=1, thr_segs=500):
+    lines = find_lines(image, min_dist, min_angel, thr_hough, num_peaks)[0]
     ans = []
 
     for line in lines:
