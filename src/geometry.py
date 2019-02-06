@@ -101,6 +101,15 @@ class Segment(Figure):
         point = Point(y[0], y[1])
         return Segment.segment_by_point_angle_length(point, y[2], y[3])
 
+    @staticmethod
+    def difference(seg1, seg2):
+        return min(
+            Point.distance_between(seg1.point_1, seg2.point_1) +
+            Point.distance_between(seg1.point_2, seg2.point_2),
+            Point.distance_between(seg1.point_1, seg2.point_2) +
+            Point.distance_between(seg1.point_2, seg2.point_1)
+        )
+
 
 class Circle(Figure):
     def __init__(self, point, radius, color=0):
