@@ -12,7 +12,10 @@ from copy import copy
 
 from sklearn.cluster import KMeans
 import numpy as np
+import scipy
+from scipy import ndimage
 
+import scipy.signal as signal
 
 def is_seg_on_line(Lin, Seg):
     d1 = Lin.dist_to_point(Seg.point_1)
@@ -80,7 +83,7 @@ def count_proc(P, Q, image):
     return proc
 
 
-image = io.imread('test_images/big5.bmp')
+image = io.imread('test_images/22_02.bmp')
 #io.imshow(image)
 coords = corner_peaks(corner_harris(image), min_distance=15)
 coords_subpix = corner_subpix(image, coords, window_size=13)
@@ -108,7 +111,7 @@ for i1 in range(num_corners):
         ##else:
         ##print(i1, i2, cou_b, cou_w, proc, px, py, qx, qy)
 list_of_proc.sort()
-plt.show()
+#plt.show()
 # Three variants of threshold
 is_good, bound = boundary_by_2_means(list_of_proc)
 bound1 = find_by_diff(list_of_proc)
@@ -126,19 +129,43 @@ for (proc, i1, i2) in list_of_proc:
     i1 = int(i1)
     i2 = int(i2)
     if proc > bound_fin:
-        print("seg", i1, i2, coords[:, 0][i1], coords[:, 1][i1], coords[:, 0][i2], coords[:, 1][i2])
+        #print("seg", i1, i2, coords[:, 0][i1], coords[:, 1][i1], coords[:, 0][i2], coords[:, 1][i2])
         #rr, cc = line(coords[:, 0][i1], coords[:, 1][i1], coords[:, 0][i2], coords[:, 1][i2])
         #img[rr, cc] = 100
         point1 = Point(coords[:, 0][i1], coords[:, 1][i1])
         point2 = Point(coords[:, 0][i2], coords[:, 1][i2])
         segm_init.append(Segment(point1, point2))
-# Hoff
+# Hough
 list_of_lines = []  # from hough in form of classes
 h, theta, d = hough_line(255 - image)
 for _, angle, dist in zip(*hough_line_peaks(h, theta, d)):
     list_of_lines.append(Line.line_by_ro_theta(dist, angle))
-seg_for_each_line = [set([]) for i in range(len(list_of_lines))]
 
+#Soble and SobleHough
+
+dx = ndimage.sobel(255 - image, 1)  # horizontal derivative
+dy = ndimage.sobel(255 - image, 0)  # vertical derivative
+mag = np.hypot(dx, dy)  # magnitude
+mag *= 255.0 / np.max(mag)  # normalize (Q&D)
+mag = np.uint8(mag)
+h1, theta1, d1 = hough_line(mag)
+
+
+#soble = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
+#result = signal.convolve2d(255 - image, soble, mode='valid')
+#h1, theta1, d1 = hough_line(result)
+
+for _, angle, dist in zip(*hough_line_peaks(h1, theta1, d1)):
+    newline = Line.line_by_ro_theta(dist, angle)
+    is_sim = False
+    for line in list_of_lines:
+        if line.is_similar(newline):
+            is_sim = True
+            break
+    if not is_sim:
+        list_of_lines.append(newline)
+
+seg_for_each_line = [set([]) for i in range(len(list_of_lines))]
 segm_final = []
 for Seg in segm_init:
     num_line = -1
