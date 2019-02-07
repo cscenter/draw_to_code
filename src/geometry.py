@@ -104,10 +104,10 @@ class Segment(Figure):
     @staticmethod
     def difference(seg1, seg2):
         return min(
-            Point.distance_between(seg1.point_1, seg2.point_1) +
-            Point.distance_between(seg1.point_2, seg2.point_2),
-            Point.distance_between(seg1.point_1, seg2.point_2) +
-            Point.distance_between(seg1.point_2, seg2.point_1)
+            Point.distance_between(seg1.point_1, seg2.point_1)**2 +
+            Point.distance_between(seg1.point_2, seg2.point_2)**2,
+            Point.distance_between(seg1.point_1, seg2.point_2)**2 +
+            Point.distance_between(seg1.point_2, seg2.point_1)**2
         )
 
 

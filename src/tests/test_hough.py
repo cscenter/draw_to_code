@@ -47,7 +47,7 @@ def test_gaussian(filename):
                                  "../../pics/gaussian_test_output")
 
 
-def test_segments(filename):
+def test_segments(filename, out_name = "hough_test_output"):
     in_image = pic_generator.load_image("../../pics/{}".format(filename))
     pic_generator.save_pil_image(in_image, "../../pics/hough_test_input")
     nim = np.array(ImageOps.invert(in_image))
@@ -63,7 +63,7 @@ def test_segments(filename):
                                                           s.point_2.x,
                                                           s.point_2.y))
         s.to_pil(draw)
-    pic_generator.save_pil_image(out_im, "../../pics/hough_test_output")
+    pic_generator.save_pil_image(out_im, "../../pics/{}".format(out_name))
 
 
 def draw_answer(test_num):
@@ -76,4 +76,5 @@ def draw_answer(test_num):
 
 
 if __name__ == "__main__":
-    test_segments("train4.bmp")
+    for i in range(6):
+        test_segments("train{}.bmp".format(i), "train{}ans".format(i))
