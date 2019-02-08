@@ -19,14 +19,19 @@ def cust(u, v):
                 ans[i][j] = 255
     return ans
 
-image = io.imread('black_circles.bmp')
+image = io.imread('many_circles.bmp')
 image = 255 - image
+image[np.where(image > 170)] = 255.
+#image0 = copy(image)
 #selem = disk(2)
 #thickimage = binary_dilation(image, selem)
 #thickimage = np.uint8(thickimage)*255
 io.imshow(image)
 plt.show()
-prev_proc = sum(sum(image))/(image.shape[0]*image.shape[1])/255
+image = np.array(image, dtype = 'float64')
+prev_proc = sum(sum(image))/(image.shape[0]*image.shape[1])/255.
+bord1 = 0.17 * prev_proc
+bord2 = 0.031 * prev_proc
 # Load picture and detect edges
 #image = img_as_ubyte(data.coins()[160:230, 70:270])
 final_list_of_circles = []
@@ -52,8 +57,8 @@ for indd in range(18):
                 image1[ccy][ccx] = 255#(255, 20, 20)#circy, circx] = (220, 20, 20)
     selem = disk(5)
     thickimage1 = binary_dilation(image1, selem)
-    thickimage1 = np.uint8(thickimage1)*255    
-    image = cust(image, thickimage1)
+    thickimage1 = np.float64(thickimage1)*255
+    image = copy(cust(image, thickimage1))
     white_proc= sum(sum(image))/(image.shape[0]*image.shape[1])/255
     print(white_proc)
     if abs(white_proc - prev_proc) < 0.0009:
