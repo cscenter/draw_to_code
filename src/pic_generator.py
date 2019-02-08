@@ -13,7 +13,6 @@ from geometry import Point, Segment, Circle, Line
 def generate_pil_image(figures_list, image_side, background_color=255, width=0):
     im = Image.new('L', (image_side, image_side), background_color)
     draw = ImageDraw.Draw(im)
-    print(figures_list) # DEBUG
     for figure in figures_list:
         figure.to_pil(draw, width=width)
     return im
@@ -78,9 +77,9 @@ def save_figures(figures, filepath):
     for fig in figures:
         if isinstance(fig, Segment):
             p1, p2 = fig.point_1, fig.point_2
-            fout.write('segment {} {} {} {}'.format(p1.x, p1.y, p2.x, p2.y))
+            fout.write('segment {} {} {} {}\n'.format(p1.x, p1.y, p2.x, p2.y))
         elif isinstance(fig, Circle):
-            fout.write('circle {} {} {}'.format(fig.radius, fig.center.x, fig.center.y))
+            fout.write('circle {} {} {}\n'.format(fig.radius, fig.center.x, fig.center.y))
         else:
             raise RuntimeError("Can't save {} object".format(type(fig)))
 
@@ -92,7 +91,7 @@ def load_figure_list(filepath):
     res = []
     for s in f.readlines():
         words = s.split()
-        nums = list(map(int, words[1:]))
+        nums = list(map(float, words[1:]))
         t = words[0]
 
         if t == 'segment':

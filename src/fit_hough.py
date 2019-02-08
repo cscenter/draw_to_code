@@ -10,7 +10,10 @@ from genetic import genetic, optimize_params
 from pic_generator import load_figure_list
 
 
-def segments_error(predict, answer, max_penalty):
+def segments_error(predictx, answerx, max_penalty):
+    predict = list(filter(lambda x : isinstance(x, Segment), predictx))
+    answer = list(filter(lambda x: isinstance(x, Segment), answerx))
+
     res = abs(len(predict) - len(answer))*max_penalty
 
     for p in predict:
@@ -30,7 +33,7 @@ def segments_error(predict, answer, max_penalty):
     return res
 
 
-def find_segments_fit(tests_in_epoch=6, max_penalty=1000):
+def find_segments_fit(tests_in_epoch=10, max_penalty=1000):
     param_variants = [
         [10, 12, 15, 20, 30, 50, 70, 80, 100, 120, 150],  # min dist
         [0, 1, 2, 3, 5, 7, 10, 12, 15, 20, 25],  # min angle
@@ -45,7 +48,7 @@ def find_segments_fit(tests_in_epoch=6, max_penalty=1000):
     fit_pics = [None] * tests_in_epoch
     fit_answers = [None] * tests_in_epoch
     for i in range(tests_in_epoch):
-        in_image = pic_generator.load_image("../pics/bettertrain{}input.bmp".format(i))
+        in_image = pic_generator.load_image("../pics/bettertrain{}input.png".format(i))
         fit_pics[i] = np.array(ImageOps.invert(in_image))
         fit_answers[i] = load_figure_list("../pics/bettertrain{}answer.txt".format(i))
 
@@ -56,7 +59,7 @@ def find_segments_fit(tests_in_epoch=6, max_penalty=1000):
             error += segments_error(predict, fit_answers[j], max_penalty)
         return error / tests_in_epoch
 
-    res = optimize_params(param_variants, badness)
+    res = optimize_params(param_variants, badness, crossing_chance=0.5)
     print(res[0], res[1])
 
 
@@ -91,4 +94,4 @@ def fit_segments_nelder_mead():
 
 
 if __name__ == "__main__":
-    fit_segments_nelder_mead()
+    find_segments_fit()

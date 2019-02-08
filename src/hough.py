@@ -44,8 +44,8 @@ params: min_dist, min_angel, thr_hough, num_peaks, min_segment_len, window_size,
 
 RETURN: list of Segment objects - segments on a picture
 """
-def find_segments(image, min_dist=30, min_angel=7, thr_hough=50, num_peaks=30, angles_count=270,
-                  min_segment_len=40, window_size=1, thr_segs=750):
+def find_segments(image, min_dist=15, min_angel=2, thr_hough=100, num_peaks=40, angles_count=720,
+                  min_segment_len=100, window_size=2, thr_segs=1000):
     lines = find_lines(image, min_dist, min_angel, thr_hough, num_peaks, angles_count)[0]
     ans = []
 
