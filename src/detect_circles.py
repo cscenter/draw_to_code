@@ -19,7 +19,7 @@ def cust(u, v):
                 ans[i][j] = 255
     return ans
 
-image = io.imread('many_circles.bmp')
+image = io.imread('black_circles.bmp')
 image = 255 - image
 image[np.where(image > 170)] = 255.
 #image0 = copy(image)
@@ -61,13 +61,13 @@ for indd in range(18):
     image = copy(cust(image, thickimage1))
     white_proc= sum(sum(image))/(image.shape[0]*image.shape[1])/255
     print(white_proc)
-    if abs(white_proc - prev_proc) < 0.0009:
+    if abs(white_proc - prev_proc) < 0.3 * bord2 + 0.7 * 0.0009:
         #print(white_proc - prev_proc)
         break
     for center_y, center_x, radius in zip(cy, cx, radii):
         final_list_of_circles.append((center_y, center_x, radius))
     prev_proc = white_proc
-    if white_proc < 0.005:
+    if white_proc < 0.3 * bord1 + 0.7 * 0.005:
         break
     ax.imshow(image, cmap=plt.cm.gray)
     plt.show()
