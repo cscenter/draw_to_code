@@ -59,9 +59,9 @@ class Segment(Figure):
             self.point_2.y
         )
 
-    def to_pil(self, draw):
+    def to_pil(self, draw, width=0):
         xy = (self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y)
-        draw.line(xy, fill=self.color, width=self.width)
+        draw.line(xy, fill=self.color, width=width)
 
     def get_middle(self):
         x = (self.point_1.x + self.point_2.x) / 2
@@ -124,11 +124,11 @@ class Circle(Figure):
             self.radius
         )
 
-    def to_pil(self, draw):
+    def to_pil(self, draw, width=0):
         x = self.center.x
         y = self.center.y
         r = self.radius
-        draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=self.color)
+        draw.arc([x - r, y - r, x + r, y + r], 0, 360, fill=self.color, width=width)
 
     def get_as_y(self, image_size):
         y = np.array([
