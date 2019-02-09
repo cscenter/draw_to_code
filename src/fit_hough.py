@@ -63,35 +63,5 @@ def find_segments_fit(tests_in_epoch=10, max_penalty=1000):
     print(res[0], res[1])
 
 
-def fit_segments_nelder_mead():
-    n = 8
-    start_params = [20, 25, 50, 10, 270, 40, 2, 1250]
-    other_params = [100, 7, 2, 30, 180, 10, 1, 1000]
-    start_sim = [start_params.copy() for _ in range(n + 1)]
-
-    for i in range(n):
-        start_sim[i][i] = other_params[i]
-
-    tests_in_epoch = 6
-
-    fit_pics = [None] * tests_in_epoch
-    fit_answers = [None] * tests_in_epoch
-    for i in range(tests_in_epoch):
-        in_image = pic_generator.load_image("../pics/train{}.bmp".format(i))
-        fit_pics[i] = np.array(ImageOps.invert(in_image))
-        fit_answers[i] = load_figure_list("../pics/ans{}.txt".format(i))
-
-    def badness(preparams):
-        params = tuple(map(lambda x : max(x, 0), preparams))
-        error = 0
-        for j in range(tests_in_epoch):
-            predict = find_segments(fit_pics[j], *params)
-            error += segments_error(predict, fit_answers[j], 500)
-        return error / tests_in_epoch
-
-    print(minimize(badness, x0=start_params,
-                   method="Nelder-Mead", disp=True, initial_simplex=start_sim))
-
-
 if __name__ == "__main__":
     find_segments_fit()

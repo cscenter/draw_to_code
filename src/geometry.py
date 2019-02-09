@@ -2,7 +2,6 @@ from math import atan2, hypot, pi, sin, cos
 
 import numpy as np
 
-
 class Figure:
     def to_tex(self):
         raise NotImplementedError
@@ -39,6 +38,9 @@ class Point:
             return self.x*other.x + self.y*other.y
         else:
             return Point(self.x*other, self.y*other)
+
+    def __str__(self):
+        return "Point({}, {})".format(self.x, self.y)
 
     def norm(self):
         return self*(1/self.len())
@@ -110,6 +112,14 @@ class Segment(Figure):
             Point.distance_between(seg1.point_2, seg2.point_1)**2
         )
 
+    def __str__(self):
+        return "Segment(({}, {}), ({}, {}))".format(
+            self.point_1.x,
+            self.point_1.y,
+            self.point_2.x,
+            self.point_2.y
+        )
+
 
 class Circle(Figure):
     def __init__(self, point, radius, color=0):
@@ -165,6 +175,8 @@ class Line(Figure):
         self.b = b
         self.c = c
 
+    def __str__(self):
+        return "Line({}, {}, {})".format(self.a, self.b, self.c)
 
     @staticmethod
     def cross(l1, l2):
@@ -212,7 +224,7 @@ class Line(Figure):
             p2 = Line.cross(self, up)
         Segment(p1, p2).to_pil(draw, color=color)
 
-    def cross_with_rect(self, p1 : Point, p2 : Point):
+    def cross_with_rect(self, p1 : Point, p2 : Point, eps=0.001):
         x1, y1, x2, y2 = p1.x, p1.y, p2.x, p2.y
         if x1 > x2:
             x1, x2 = x2, x1
@@ -223,13 +235,11 @@ class Line(Figure):
                  Line(1, 0, x2), Line(0, 1, y2)]
         good_points = []
         for side in sides:
-            try:
-                point = Line.cross(self, side)
-                if x1 <= point.x <= x2 and y1 <= point.y <= y2:
-                    good_points.append(point)
-            except ZeroDivisionError:
-                pass
-
+            point = Line.cross(self, side)
+            if point is not None and\
+                    x1 - eps <= point.x <= x2 + eps and\
+                    y1 - eps <= point.y <= y2 + eps:
+                good_points.append(point)
 
         if len(good_points) == 0:
             return None
@@ -237,7 +247,7 @@ class Line(Figure):
         start_point = good_points[0]
         end_point = None
         for point in good_points:
-            if point.x != start_point.x or point.y != start_point.y:
+            if (start_point - point).len() > eps:
                 end_point = point
                 break
 
