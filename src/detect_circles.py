@@ -1,3 +1,4 @@
+from geometry import Circle, Point, Segment, Line
 from copy import copy
 from skimage import data, io
 import numpy as np
@@ -19,55 +20,48 @@ def cust(u, v):
                 ans[i][j] = 255
     return ans
 
-image = io.imread('black_circles.bmp')
-image = 255 - image
-image[np.where(image > 170)] = 255.
-#image0 = copy(image)
-#selem = disk(2)
-#thickimage = binary_dilation(image, selem)
-#thickimage = np.uint8(thickimage)*255
-io.imshow(image)
-plt.show()
-image = np.array(image, dtype = 'float64')
-prev_proc = sum(sum(image))/(image.shape[0]*image.shape[1])/255.
-bord1 = 0.17 * prev_proc
-bord2 = 0.031 * prev_proc
-# Load picture and detect edges
-#image = img_as_ubyte(data.coins()[160:230, 70:270])
-final_list_of_circles = []
-for indd in range(18):
-    edges = canny(image, sigma=3, low_threshold=10, high_threshold=50)
-    minim_radii = int(min(image.shape[0], image.shape[1])/20)
-    maxim_radii = int(min(image.shape[0], image.shape[1])/2)
-    stepp = 1
-    if (maxim_radii - minim_radii) > 200:
-        stepp = 2
-    if (maxim_radii - minim_radii) > 400:
-        stepp = 4
-    hough_radii = np.arange(minim_radii, maxim_radii, stepp)
-    hough_res = hough_circle(edges, hough_radii)
-    accums, cx, cy, radii = hough_circle_peaks(hough_res, hough_radii, total_num_peaks = 1)
-    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
-    image1 = np.zeros((image.shape[0], image.shape[1]))
-    #image1 = copy(image)#color.gray2rgb(image)
-    for center_y, center_x, radius in zip(cy, cx, radii):
-        circy, circx = circle_perimeter(center_y, center_x, radius)
-        for ccy, ccx in zip(circy, circx):
-            if 0 < ccy < image.shape[0] and 0 < ccx < image.shape[1]:
-                image1[ccy][ccx] = 255#(255, 20, 20)#circy, circx] = (220, 20, 20)
-    selem = disk(5)
-    thickimage1 = binary_dilation(image1, selem)
-    thickimage1 = np.float64(thickimage1)*255
-    image = copy(cust(image, thickimage1))
-    white_proc= sum(sum(image))/(image.shape[0]*image.shape[1])/255
-    print(white_proc)
-    if abs(white_proc - prev_proc) < 0.3 * bord2 + 0.7 * 0.0009:
-        #print(white_proc - prev_proc)
-        break
-    for center_y, center_x, radius in zip(cy, cx, radii):
-        final_list_of_circles.append((center_y, center_x, radius))
-    prev_proc = white_proc
-    if white_proc < 0.3 * bord1 + 0.7 * 0.005:
-        break
+#image = io.imread('black_circles.bmp')
+def find_circles(image):
+    image = 255 - image
+    image = np.array(image, dtype='float64')
+    prev_proc = sum(sum(image)) / (image.shape[0] * image.shape[1]) / 255.
+    bord1 = 0.17 * prev_proc
+    bord2 = 0.031 * prev_proc
+    final_list_of_circles = []
+    for indd in range(18):
+        edges = canny(image, sigma=3, low_threshold=10, high_threshold=50)
+        minim_radii = int(min(image.shape[0], image.shape[1])/20)
+        maxim_radii = int(min(image.shape[0], image.shape[1])/2)
+        stepp = 1
+        if (maxim_radii - minim_radii) > 200:
+            stepp = 2
+        if (maxim_radii - minim_radii) > 400:
+            stepp = 4
+        hough_radii = np.arange(minim_radii, maxim_radii, stepp)
+        hough_res = hough_circle(edges, hough_radii)
+        accums, cx, cy, radii = hough_circle_peaks(hough_res, hough_radii, total_num_peaks = 1)
+        fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
+        image1 = np.zeros((image.shape[0], image.shape[1]))
+        #image1 = copy(image)#color.gray2rgb(image)
+        for center_y, center_x, radius in zip(cy, cx, radii):
+            circy, circx = circle_perimeter(center_y, center_x, radius)
+            for ccy, ccx in zip(circy, circx):
+                if 0 < ccy < image.shape[0] and 0 < ccx < image.shape[1]:
+                    image1[ccy][ccx] = 255
+        selem = disk(5)
+        thickimage1 = binary_dilation(image1, selem)
+        thickimage1 = np.uint8(thickimage1)*255
+        image = cust(image, thickimage1)
+        white_proc= sum(sum(image))/(image.shape[0]*image.shape[1])/255
+        #print(white_proc)
+        if abs(white_proc - prev_proc) < 0.3 * bord2 + 0.7 * 0.0009:
+            #print(white_proc - prev_proc)
+            break
+        for center_y, center_x, radius in zip(cy, cx, radii):
+            final_list_of_circles.append(Circle(Point(center_y, center_x), radius))
+        prev_proc = white_proc
+        if white_proc < 0.3 * bord1 + 0.7 * 0.005:
+            break
     ax.imshow(image, cmap=plt.cm.gray)
     plt.show()
+    return final_list_of_circles

@@ -1,4 +1,4 @@
-from math import atan2, hypot, pi, sin, cos
+from math import atan2, hypot, pi, sin, cos, sqrt
 
 import numpy as np
 
@@ -157,7 +157,17 @@ class Line(Figure):
 
     @staticmethod
     def line_by_ro_theta(ro, theta):
+        return Line(np.sin(theta), np.cos(theta), ro)
+
+    def line_by_ro_theta_1(ro, theta):
         return Line(np.cos(theta), np.sin(theta), ro)
+
+    @staticmethod
+    def line_by_two_points(p1 : Point, p2 : Point):
+        dir = Point(p2.x - p1.x, p2.y - p1.y)
+        a, b = -dir.y, dir.x
+        c = a*p1.x + b*p1.y
+        return Line(a, b, c)
 
     def ro(self):
         return self.dist_to_point(Point(0, 0))
@@ -179,5 +189,19 @@ class Line(Figure):
             p2 = Line.cross(self, up)
         Segment(p1, p2, color=color).to_pil(draw)
 
-
-
+    def is_similar(self, line2):
+        an = self.a / sqrt(self.a ** 2 + self.b ** 2)
+        bn = self.b / sqrt(self.a ** 2 + self.b ** 2)
+        cn = self.c / sqrt(self.a ** 2 + self.b ** 2)
+        an2 = line2.a / sqrt(line2.a ** 2 + line2.b ** 2)
+        bn2 = line2.b / sqrt(line2.a ** 2 + line2.b ** 2)
+        cn2 = line2.c / sqrt(line2.a ** 2 + line2.b ** 2)
+        dett = an * bn2 - an2 * bn
+        thr_det = 0.1#0.05
+        thr_c = 8#5
+        is_par = (abs(dett) < thr_det)
+        if not is_par:
+            return False
+        if cn * cn2 < 0:
+            cn2 *= -1
+        return (abs(cn - cn2) < thr_c)

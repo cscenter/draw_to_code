@@ -6,7 +6,7 @@ class Converter:
 class TexConverter(Converter):
 
     template = """
-    \\begin{{tikzpicture}}
+    \\begin{{tikzpicture}}[scale = 0.5]
         {}
     \\end{{tikzpicture}}
     """

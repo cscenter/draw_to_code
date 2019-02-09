@@ -6,9 +6,8 @@ from helper import save_as_png
 
 
 TEMPLATE = """
-\documentclass[border={{0 0 0 0}}]{{standalone}}
+\documentclass[12pt, a4paper]{{standalone}}
 \\usepackage{{tikz}}
-
 
 \\begin{{document}}
     {}
