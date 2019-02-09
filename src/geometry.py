@@ -240,7 +240,6 @@ class Line(Figure):
             x1, x2 = x2, x1
         if y1 > y2:
             y1, y2 = y2, y1
-
         sides = [Line(1, 0, x1), Line(0, 1, y1),
                  Line(1, 0, x2), Line(0, 1, y2)]
         good_points = []

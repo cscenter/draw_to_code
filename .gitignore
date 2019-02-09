@@ -1,3 +1,7 @@
 *.pyc
 *.png
 *.tex
+*.jpeg
+*.jpg
+*.iml
+.idea

@@ -1,18 +1,14 @@
-from geometry import Circle, Point, Segment, Line
-from copy import copy
-from skimage import data, io
-import numpy as np
 import matplotlib.pyplot as plt
-
-from skimage import data, color
-from skimage.transform import hough_circle, hough_circle_peaks
-from skimage.feature import canny
+import numpy as np
+from geometry import Circle, Point
 from skimage.draw import circle_perimeter
-from skimage.util import img_as_ubyte
-from skimage.morphology import binary_erosion, skeletonize, binary_closing, binary_opening, binary_dilation, remove_small_holes
+from skimage.feature import canny
+from skimage.morphology import binary_dilation
 from skimage.morphology import disk
+from skimage.transform import hough_circle, hough_circle_peaks
 
-def cust(u, v):
+
+def subtract_skimage(u, v):
     ans = np.zeros((u.shape[0], u.shape[1]))
     for i in range(u.shape[0]):
         for j in range(u.shape[1]):
@@ -20,18 +16,21 @@ def cust(u, v):
                 ans[i][j] = 255
     return ans
 
-#image = io.imread('black_circles.bmp')
+
 def find_circles(image):
     image = 255 - image
     image = np.array(image, dtype='float64')
     prev_proc = sum(sum(image)) / (image.shape[0] * image.shape[1]) / 255.
+    # 0.17, 0.031 are constants based on example 'many_circles.bmp'
     bord1 = 0.17 * prev_proc
     bord2 = 0.031 * prev_proc
     final_list_of_circles = []
-    for indd in range(18):
+    max_amount_of_circles = 18
+    for indd in range(max_amount_of_circles):
         edges = canny(image, sigma=3, low_threshold=10, high_threshold=50)
         minim_radii = int(min(image.shape[0], image.shape[1])/20)
         maxim_radii = int(min(image.shape[0], image.shape[1])/2)
+        # Adapt step in Hough transform if picture is too big
         stepp = 1
         if (maxim_radii - minim_radii) > 200:
             stepp = 2
@@ -42,26 +41,26 @@ def find_circles(image):
         accums, cx, cy, radii = hough_circle_peaks(hough_res, hough_radii, total_num_peaks = 1)
         fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
         image1 = np.zeros((image.shape[0], image.shape[1]))
-        #image1 = copy(image)#color.gray2rgb(image)
         for center_y, center_x, radius in zip(cy, cx, radii):
             circy, circx = circle_perimeter(center_y, center_x, radius)
             for ccy, ccx in zip(circy, circx):
                 if 0 < ccy < image.shape[0] and 0 < ccx < image.shape[1]:
                     image1[ccy][ccx] = 255
+        # Thick segments before subtracting
         selem = disk(5)
         thickimage1 = binary_dilation(image1, selem)
         thickimage1 = np.uint8(thickimage1)*255
-        image = cust(image, thickimage1)
-        white_proc= sum(sum(image))/(image.shape[0]*image.shape[1])/255
-        #print(white_proc)
+        image = subtract_skimage(image, thickimage1)
+        white_proc = sum(sum(image))/(image.shape[0]*image.shape[1])/255
+        # if prev iteration is very similar to new iteration, stop
         if abs(white_proc - prev_proc) < 0.3 * bord2 + 0.7 * 0.0009:
-            #print(white_proc - prev_proc)
             break
         for center_y, center_x, radius in zip(cy, cx, radii):
             final_list_of_circles.append(Circle(Point(center_y, center_x), radius))
         prev_proc = white_proc
+        # if procent of white pixels is too small, stop
         if white_proc < 0.3 * bord1 + 0.7 * 0.005:
             break
-    ax.imshow(image, cmap=plt.cm.gray)
-    plt.show()
+    #ax.imshow(image, cmap=plt.cm.gray)
+    #plt.show()
     return final_list_of_circles
