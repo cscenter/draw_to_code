@@ -59,9 +59,9 @@ class Segment(Figure):
             self.point_2.y
         )
 
-    def to_pil(self, draw, width=0):
+    def to_pil(self, draw, width=0, color=0):
         xy = (self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y)
-        draw.line(xy, fill=self.color, width=width)
+        draw.line(xy, fill=color, width=width)
 
     def get_middle(self):
         x = (self.point_1.x + self.point_2.x) / 2
@@ -182,7 +182,7 @@ class Line(Figure):
         return abs(a*x + b*y - c)/np.sqrt(a*a + b*b)
 
     @staticmethod
-    def line_by_ro_theta(ro, theta):
+    def line_by_ro_theta_1(ro, theta):
         return Line(np.cos(theta), np.sin(theta), ro)
 
     @staticmethod
@@ -210,7 +210,7 @@ class Line(Figure):
             up = Line(1, 0, img_size)
             p1 = Line.cross(self, down)
             p2 = Line.cross(self, up)
-        Segment(p1, p2, color=color).to_pil(draw)
+        Segment(p1, p2).to_pil(draw, color=color)
 
     def cross_with_rect(self, p1 : Point, p2 : Point):
         x1, y1, x2, y2 = p1.x, p1.y, p2.x, p2.y
@@ -245,5 +245,3 @@ class Line(Figure):
             return None
         else:
             return Segment(start_point, end_point)
-
-

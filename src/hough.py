@@ -29,7 +29,7 @@ def find_lines(image, min_dist=30, min_angle=10, threshold=15, num_peaks=10, ang
     hspace, angels, distances = hough_line(image, np.linspace(-np.pi/2, np.pi/2, angles_count))
     accum, thetas, ros = hough_line_peaks(hspace, angels, distances,
                                           min_dist, min_angle, threshold, num_peaks)
-    lines = [Line.line_by_ro_theta(ros[i], thetas[i]) for i in range(len(ros))]
+    lines = [Line.line_by_ro_theta_1(ros[i], thetas[i]) for i in range(len(ros))]
     return lines, accum, hspace
 
 

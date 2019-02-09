@@ -30,21 +30,12 @@ def test_hough(filename):
     lines, accum, hough = find_lines(nim)
 
 
-    out_im = Image.new('L', (nim.shape[1], nim.shape[0]), 255)
+    out_im = Image.open("../../pics/hough_test_input.png")
     draw = ImageDraw.Draw(out_im)
     for i, l in enumerate(lines):
         print("a = {}, b = {}, c = {}, accum = {}".format(l.a, l.b, l.c, accum[i]))
-        l.to_pil(draw, max(nim.shape[0], nim.shape[1]))
+        l.to_pil(draw, max(nim.shape[0], nim.shape[1]), color='red')
     pic_generator.save_pil_image(out_im, "../../pics/hough_test_output")
-
-
-def test_gaussian(filename):
-    in_image = pic_generator.load_image("../../pics/{}".format(filename))
-    pic_generator.save_pil_image(in_image, "../../pics/gaussian_test_input")
-    nim = np.array(in_image)
-    nout = gaussian(nim, sigma=0)
-    pic_generator.save_pil_image(Image.fromarray(nim, 'I'),
-                                 "../../pics/gaussian_test_output")
 
 
 def test_segments(filename, out_name = "hough_test_output"):
@@ -76,6 +67,6 @@ def draw_answer(test_num):
 
 
 if __name__ == "__main__":
-    test_segments("example.png")
-    for i in range(10):
-        test_segments("bettertrain{}input.png".format(i), "bettertrain{}result".format(i))
+    test_hough("bettertrain5input.png")
+    #for i in range(10):
+        #test_segments("bettertrain{}input.png".format(i), "bettertrain{}result".format(i))
