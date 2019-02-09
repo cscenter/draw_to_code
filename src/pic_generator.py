@@ -10,11 +10,13 @@ from latex_pic_generator import convert_to_pic
 from geometry import Point, Segment, Circle, Line
 
 
-def generate_pil_image(figures_list, image_side, background_color=255, width=0):
+def generate_pil_image(figures_list, image_side, background_color=255,
+                       width=0, width_rand=False):
     im = Image.new('L', (image_side, image_side), background_color)
     draw = ImageDraw.Draw(im)
     for figure in figures_list:
-        figure.to_pil(draw, width=width)
+        w = randint(0, width) if width_rand else width
+        figure.to_pil(draw, width=w)
     return im
 
 
@@ -56,7 +58,7 @@ def image_to_square(image, size, background_color=255):
 
 def generate_random_pic(image_size,
                         circles_amount=0, segments_amount=0, triangles_amount=0,
-                        figures_width=0):
+                        figures_width=0, width_rand=False):
     figures = []
 
     for _ in range(circles_amount):
@@ -68,7 +70,9 @@ def generate_random_pic(image_size,
     for _ in range(segments_amount):
         figures.append(generate_segment(image_size))
 
-    return generate_pil_image(figures, image_size, width=figures_width), figures
+    return generate_pil_image(figures, image_size,
+                              width=figures_width, width_rand=width_rand),\
+           figures
 
 
 def save_figures(figures, filepath):
@@ -113,17 +117,17 @@ def load_figure_list(filepath):
 
 def generate_dataset(image_size, amount, filename,
                      max_segments=5, max_circles=5, max_triangles=3,
-                     fig_width=0):
+                     fig_width=0, width_rand=False):
     for i in range(amount):
         pic, fig = generate_random_pic(image_size,
                                        segments_amount=randint(0, max_segments),
                                        circles_amount=randint(0, max_circles),
                                        triangles_amount=randint(0, max_triangles),
-                                       figures_width=fig_width)
+                                       figures_width=fig_width, width_rand=width_rand)
         save_figures(fig, "{}{}answer.txt".format(filename, i))
         pic.save("{}{}input.png".format(filename, i))
 
 
 if __name__ == "__main__":
-    generate_dataset(500, 10, "../pics/bettertrain", fig_width=2,
+    generate_dataset(500, 10, "../pics/bettertrain", fig_width=4, width_rand=True,
                      max_segments=3, max_circles=2, max_triangles=1)
