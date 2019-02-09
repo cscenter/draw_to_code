@@ -41,13 +41,13 @@ def test_line():
     check_eq_points(Line.cross(l2, l3), Point(7, 4))
 
     abc1 = Line(3, 2, 13)
-    roth1 = Line.line_by_ro_theta(np.sqrt(13), np.arctan(2/3))
+    roth1 = Line.line_by_ro_theta_1(np.sqrt(13), np.arctan(2 / 3))
     abc2 = Line(1, 0, 5)
-    roth2 = Line.line_by_ro_theta(5, 0)
+    roth2 = Line.line_by_ro_theta_1(5, 0)
     abc3 = Line(0, 1, 5)
-    roth3 = Line.line_by_ro_theta(5, np.pi/2)
+    roth3 = Line.line_by_ro_theta_1(5, np.pi / 2)
     abc4 = Line(0, 1, -7)
-    roth4 = Line.line_by_ro_theta(7, -np.pi/2)
+    roth4 = Line.line_by_ro_theta_1(7, -np.pi / 2)
     check_eq_lines(abc1, roth1)
     check_eq_lines(abc2, roth2)
     check_eq_lines(abc3, roth3)
@@ -59,7 +59,7 @@ def test_line():
             a, b, c = [uniform(-100, 100) for _ in range(3)]
         l1 = Line(a, b, c)
         ro, theta = l1.ro(), l1.theta()
-        l2 = Line.line_by_ro_theta(ro, theta)
+        l2 = Line.line_by_ro_theta_1(ro, theta)
         check_eq_lines(l1, l2)
 
 
