@@ -25,7 +25,7 @@ RETURN: three arrays - result, accum and hspace
     accum: "brightnesses" of lines
     hspace: hough space
 """
-def find_lines(image, min_dist=30, min_angle=10, threshold=15, num_peaks=10, angles_count=720):
+def find_lines(image, min_dist=80, min_angle=7, threshold=100, num_peaks=20, angles_count=720):
     hspace, angels, distances = hough_line(image, np.linspace(-np.pi/2, np.pi/2, angles_count))
     accum, thetas, ros = hough_line_peaks(hspace, angels, distances,
                                           min_dist, min_angle, threshold, num_peaks)
@@ -44,15 +44,15 @@ params: min_dist, min_angel, thr_hough, num_peaks, min_segment_len, window_size,
 
 RETURN: list of Segment objects - segments on a picture
 """
-def find_segments(image, min_dist=15, min_angel=2, thr_hough=100, num_peaks=40, angles_count=720,
-                  min_segment_len=100, window_size=2, thr_segs=1000):
+def find_segments(image, min_dist=50, min_angel=12, thr_hough=100, num_peaks=20, angles_count=720,
+                  min_segment_len=40, window_size=2, thr_segs=750):
     lines = find_lines(image, min_dist, min_angel, thr_hough, num_peaks, angles_count)[0]
     ans = []
 
     for line in lines:
         way = line.cross_with_rect(Point(0, 0), Point(image.shape[1], image.shape[0]))
         if way is None:
-            # print("Warning: line doesn't intersect image (hough.py, def find_segments)")
+            print("Warning: line doesn't intersect image (hough.py, def find_segments)")
             continue
 
         dir = way.point_2 - way.point_1

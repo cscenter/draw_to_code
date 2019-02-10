@@ -30,7 +30,7 @@ def test_hough(filename):
     lines, accum, hough = find_lines(nim)
 
 
-    out_im = Image.open("../../pics/hough_test_input.png")
+    out_im = Image.new('L', (nim.shape[1], nim.shape[0]), 255)
     draw = ImageDraw.Draw(out_im)
     for i, l in enumerate(lines):
         print("a = {}, b = {}, c = {}, accum = {}".format(l.a, l.b, l.c, accum[i]))
@@ -67,6 +67,6 @@ def draw_answer(test_num):
 
 
 if __name__ == "__main__":
-    test_hough("bettertrain5input.png")
-    #for i in range(10):
-        #test_segments("bettertrain{}input.png".format(i), "bettertrain{}result".format(i))
+    test_segments("bettertrain2input.png")
+    for i in range(10):
+        test_segments("bettertrain{}input.png".format(i), "bettertrain{}result".format(i))
