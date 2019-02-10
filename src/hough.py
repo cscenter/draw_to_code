@@ -1,12 +1,6 @@
-import cv2
 import numpy as np
+from geometry import Point, Segment, Line
 from skimage.transform import hough_line, hough_line_peaks
-from skimage.filters import gaussian
-from random import choice, randint
-from PIL import ImageOps
-
-from geometry import Point, Segment, Circle, Line
-import pic_generator
 
 STD_PARAMS_LINES_SKIMAGE = (30, 10, 15, 10)
 STD_PARAMS_SEGMENTS_SKIMAGE = (*STD_PARAMS_LINES_SKIMAGE, 40, 1, 500)

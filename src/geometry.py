@@ -1,4 +1,4 @@
-from math import atan2, hypot, pi, sin, cos
+from math import atan2, hypot, pi, sin, cos, sqrt
 
 import numpy as np
 
@@ -54,7 +54,7 @@ class Segment(Figure):
         self.point_2 = point_2
 
     def to_tex(self):
-        return "\\draw ({}, {}) -- ({}, {});".format(
+        return "\\draw[line width=8mm] ({}, {}) -- ({}, {});".format(
             self.point_1.x,
             self.point_1.y,
             self.point_2.x,
@@ -128,7 +128,7 @@ class Circle(Figure):
         self.radius = radius
 
     def to_tex(self):
-        return "\\draw ({}, {}) circle ({});".format(
+        return "\\draw[line width=8mm] ({}, {}) circle ({});".format(
             self.center.x,
             self.center.y,
             self.radius
@@ -194,6 +194,10 @@ class Line(Figure):
         return abs(a*x + b*y - c)/np.sqrt(a*a + b*b)
 
     @staticmethod
+    def line_by_ro_theta(ro, theta):
+        return Line(np.sin(theta), np.cos(theta), ro)
+    
+    @staticmethod
     def line_by_ro_theta_1(ro, theta):
         return Line(np.cos(theta), np.sin(theta), ro)
 
@@ -222,7 +226,25 @@ class Line(Figure):
             up = Line(1, 0, img_size)
             p1 = Line.cross(self, down)
             p2 = Line.cross(self, up)
-        Segment(p1, p2).to_pil(draw, color=color)
+        Segment(p1, p2, color=color).to_pil(draw)
+
+        
+    def is_similar(self, line2):
+        an = self.a / sqrt(self.a ** 2 + self.b ** 2)
+        bn = self.b / sqrt(self.a ** 2 + self.b ** 2)
+        cn = self.c / sqrt(self.a ** 2 + self.b ** 2)
+        an2 = line2.a / sqrt(line2.a ** 2 + line2.b ** 2)
+        bn2 = line2.b / sqrt(line2.a ** 2 + line2.b ** 2)
+        cn2 = line2.c / sqrt(line2.a ** 2 + line2.b ** 2)
+        dett = an * bn2 - an2 * bn
+        thr_det = 0.1#0.05
+        thr_c = 8#5
+        is_par = (abs(dett) < thr_det)
+        if not is_par:
+            return False
+        if cn * cn2 < 0:
+            cn2 *= -1
+        return (abs(cn - cn2) < thr_c)
 
     def cross_with_rect(self, p1 : Point, p2 : Point, eps=0.001):
         x1, y1, x2, y2 = p1.x, p1.y, p2.x, p2.y
@@ -230,7 +252,6 @@ class Line(Figure):
             x1, x2 = x2, x1
         if y1 > y2:
             y1, y2 = y2, y1
-
         sides = [Line(1, 0, x1), Line(0, 1, y1),
                  Line(1, 0, x2), Line(0, 1, y2)]
         good_points = []
@@ -255,3 +276,20 @@ class Line(Figure):
             return None
         else:
             return Segment(start_point, end_point)
+
+    def find_project(self, p : Point):
+        anorm = self.a / sqrt(self.a ** 2 + self.b ** 2)
+        bnorm = self.b / sqrt(self.a ** 2 + self.b ** 2)
+        dist = self.dist_to_point(p)
+        movex = anorm * dist
+        movey = bnorm * dist
+        v1x = p.x + movex
+        v1y = p.y + movey
+        v2x = p.x - movex
+        v2y = p.y - movey
+        diff1 = abs(self.a * v1x + self.b * v1y - self.c)
+        diff2 = abs(self.a * v2x + self.b * v2y - self.c)
+        if diff1 < diff2:
+            return Point(v1x, v1y)
+        return Point(v2x, v2y)
+
