@@ -52,7 +52,7 @@ class Segment(Figure):
         self.point_2 = point_2
 
     def to_tex(self):
-        return "\\draw ({}, {}) -- ({}, {});".format(
+        return "\\draw[line width=8mm] ({}, {}) -- ({}, {});".format(
             self.point_1.x,
             self.point_1.y,
             self.point_2.x,
@@ -118,7 +118,7 @@ class Circle(Figure):
         self.radius = radius
 
     def to_tex(self):
-        return "\\draw ({}, {}) circle ({});".format(
+        return "\\draw[line width=8mm] ({}, {}) circle ({});".format(
             self.center.x,
             self.center.y,
             self.radius
@@ -266,4 +266,20 @@ class Line(Figure):
             return None
         else:
             return Segment(start_point, end_point)
+
+    def find_project(self, p : Point):
+        anorm = self.a / sqrt(self.a ** 2 + self.b ** 2)
+        bnorm = self.b / sqrt(self.a ** 2 + self.b ** 2)
+        dist = self.dist_to_point(p)
+        movex = anorm * dist
+        movey = bnorm * dist
+        v1x = p.x + movex
+        v1y = p.y + movey
+        v2x = p.x - movex
+        v2y = p.y - movey
+        diff1 = abs(self.a * v1x + self.b * v1y - self.c)
+        diff2 = abs(self.a * v2x + self.b * v2y - self.c)
+        if diff1 < diff2:
+            return Point(v1x, v1y)
+        return Point(v2x, v2y)
 

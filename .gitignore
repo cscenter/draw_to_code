@@ -4,4 +4,6 @@
 *.jpeg
 *.jpg
 *.iml
+*.aux
+*.log
 .idea

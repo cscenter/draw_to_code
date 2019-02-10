@@ -16,10 +16,12 @@ from geometry import Point, Segment
 
 
 def main():
-    file_path = 'test_images/big2.bmp'
+    file_path = 'test_images/test_64.png'
     key = 1
     if key == 1:
-        image = io.imread(file_path)
+        #image = io.imread(file_path)
+        image = pic_generator.load_image(file_path)
+        image = np.array(image)
         # If use_sobel == 1, we add lines from Hough transform after Sobel filter. But it works slower
         final_list_of_segments = find_segments(image, use_sobel=1)
     else:
@@ -53,9 +55,9 @@ def main():
         output.write(output_file)
         output_file.close()
     os.remove('rotated.pdf')
-    #os.remove('rotated.log')
-    #os.remove('rotated.tex')
-    #os.remove('rotated.aux')
+    os.remove('rotated.log')
+    os.remove('rotated.tex')
+    os.remove('rotated.aux')
     output_tex = open("output.tex", "w")
     output_tex.write(template_tex)
     output_tex.close()

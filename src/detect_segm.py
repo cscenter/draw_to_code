@@ -70,7 +70,11 @@ def count_proc(P, Q, image):
 
 def find_segments(image, use_sobel=1):
     #Find corners
-    coords = corner_peaks(corner_harris(image), min_distance=15)
+    coords = corner_peaks(corner_harris(image), min_distance=10)
+    if len(coords) > 40:
+        coords = corner_peaks(corner_harris(image), min_distance=15)
+        if len(coords) > 40:
+            coords = corner_peaks(corner_harris(image), min_distance=20)
     num_corners = len(coords)
     #for each pair of corners calculate pixel_metric to understand is it a segment
     list_of_proc = []
@@ -178,7 +182,9 @@ def find_segments(image, use_sobel=1):
                     finish = Point(curlist[j][0], curlist[j][1])
                 else:
                     finish = Point(curlist[j][0], curlist[j][1])
-                segm_final.append(Segment(start, finish))
+                start_proj = list_of_lines[i].find_project(start)
+                finish_proj = list_of_lines[i].find_project(finish)
+                segm_final.append(Segment(start_proj, finish_proj))
                 # print((start.x, start.y, finish.x, finish.y))
     return segm_final
 
