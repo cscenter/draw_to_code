@@ -68,5 +68,5 @@ def draw_answer(test_num):
 
 if __name__ == "__main__":
     test_segments("bettertrain2input.png")
-    # for i in range(10):
-        # test_segments("bettertrain{}input.png".format(i), "bettertrain{}result".format(i))
+    for i in range(10):
+        test_segments("bettertrain{}input.png".format(i), "bettertrain{}result".format(i))

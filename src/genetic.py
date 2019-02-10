@@ -120,6 +120,8 @@ def genetic(create_animal, badness, mutation, crossing=None,
                                                              round(best_result),
                                                              population[0][0]))
 
+    with open("genetic_log.txt", "w") as fout:
+        fout.write("{}\n{}\n".format(population[0][0], population[0][1]))
     return population[0][0], population[0][1], history
 
 
