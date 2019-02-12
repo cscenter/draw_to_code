@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.3.26)  9 FEB 2019 18:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.3.26)  12 FEB 2019 14:06
 entering extended mode
 **./rotated.tex
 (rotated.tex
@@ -434,16 +434,16 @@ G,.JBIG2,.JB2,.eps]
 ]
 (rotated.aux) ) 
 Here is how much of TeX's memory you used:
- 11762 strings out of 493333
- 239217 string characters out of 3139167
- 271614 words of memory out of 3000000
- 15084 multiletter control sequences out of 15000+200000
+ 11782 strings out of 493333
+ 239733 string characters out of 3139167
+ 274614 words of memory out of 3000000
+ 15104 multiletter control sequences out of 15000+200000
  3938 words of font info for 15 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,5n,56p,391b,349s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,7n,56p,391b,522s stack positions out of 5000i,500n,10000p,200000b,50000s
 
 Output written on C:/Users/Татьяна/Documents/Таня/Sirius2019/draw_to
-_code/src/rotated.pdf (1 page, 1340 bytes).
+_code/src/rotated.pdf (1 page, 1784 bytes).
 PDF statistics:
  9 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

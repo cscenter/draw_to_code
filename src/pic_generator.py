@@ -38,7 +38,7 @@ def save_pil_image(pil_image, path):
 
 def load_image(image_path):
     image = Image.open(image_path)
-    threshold = 180
+    threshold = 100
     return image.convert('L').point(lambda x : 255 if x > threshold else 0)
 
 

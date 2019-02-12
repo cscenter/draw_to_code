@@ -17,15 +17,22 @@ def subtract_skimage(u, v):
     return ans
 
 
-def find_circles(image):
+def find_circles(image, count_):
     image = 255 - image
+    image[np.where(image > 170)] = 255.
     image = np.array(image, dtype='float64')
     prev_proc = sum(sum(image)) / (image.shape[0] * image.shape[1]) / 255.
     # 0.17, 0.031 are constants based on example 'many_circles.bmp'
-    bord1 = 0.17 * prev_proc
-    bord2 = 0.031 * prev_proc
+    if count_ == -1:
+        bord1 = 0.17 * prev_proc
+        bord2 = 0.031 * prev_proc
+    else:
+        bord1 = -10000
+        bord2 = -10000
     final_list_of_circles = []
     max_amount_of_circles = 18
+    if count_ != -1:
+        max_amount_of_circles = count_
     for indd in range(max_amount_of_circles):
         edges = canny(image, sigma=3, low_threshold=10, high_threshold=50)
         minim_radii = int(min(image.shape[0], image.shape[1])/20)
@@ -38,7 +45,7 @@ def find_circles(image):
             stepp = 4
         hough_radii = np.arange(minim_radii, maxim_radii, stepp)
         hough_res = hough_circle(edges, hough_radii)
-        accums, cx, cy, radii = hough_circle_peaks(hough_res, hough_radii, total_num_peaks = 1)
+        accums, cx, cy, radii = hough_circle_peaks(hough_res, hough_radii, total_num_peaks=1)
         fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
         image1 = np.zeros((image.shape[0], image.shape[1]))
         for center_y, center_x, radius in zip(cy, cx, radii):

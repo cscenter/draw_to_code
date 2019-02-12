@@ -1,4 +1,5 @@
 from copy import copy
+from math import ceil
 
 import numpy as np
 from PIL import Image, ImageDraw
@@ -144,12 +145,12 @@ def find_segments(image, use_sobel=1):
             if new_dist < min_dist:
                 min_dist = new_dist
                 num_line = i
-        if min_dist < 8:
+        if min_dist < 18:
             seg_for_each_line[num_line].add((Seg.point_1.x, Seg.point_1.y))
             seg_for_each_line[num_line].add((Seg.point_2.x, Seg.point_2.y))
         else:
             procc = count_proc(Seg.point_1, Seg.point_2, image)
-            if procc > 0.3:
+            if procc > 0.4:
                 segm_final.append(Seg)
     # Sort points on lines and check neighbours -- whether they form segment
     for i in range(len(list_of_lines)):
@@ -166,7 +167,13 @@ def find_segments(image, use_sobel=1):
         for j in range(len(curlist) - 1):
             P = Point(curlist[j][0], curlist[j][1])
             Q = Point(curlist[j + 1][0], curlist[j + 1][1])
-            proc = count_proc(P, Q, image)
+            P1 = list_of_lines[i].find_project(P)
+            Q1 = list_of_lines[i].find_project(Q)
+            P1.x = ceil(P1.x)
+            P1.y = ceil(P1.y)
+            Q1.x = ceil(Q1.x)
+            Q1.y = ceil(Q1.y)
+            proc = count_proc(P1, Q1, image)
             if proc > bound_fin:
                 have_seg[j] = 1
         # Form nei segments in one big segment
@@ -195,6 +202,6 @@ def draw_segments(image, segm_final):
     for Seg in segm_final:
         P1 = Seg.point_1
         P2 = Seg.point_2
-        draw.line([(int(P1.y), int(P1.x)), (int(P2.y), int(P2.x))], width=5)
+        draw.line([(int(P1.y), int(P1.x)), (int(P2.y), int(P2.x))], width=7)
     del draw
     return img
