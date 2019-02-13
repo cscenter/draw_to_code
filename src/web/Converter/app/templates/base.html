@@ -1,0 +1,31 @@
+<html>
+
+
+	<head>
+
+
+		{% if title %}
+
+		<title>{{ title }} - Draw To Code</title>
+
+
+		{% else %}
+
+		<title>Welcome to Draw To Code</title>
+
+
+		{% endif %}
+
+	</head>
+    
+	
+	<body>
+
+
+		<div>Draw to Code: <a href="/index">Home</a></div>
+		<hr>
+        	{% block content %}{% endblock %}
+	</body>
+
+
+</html>
