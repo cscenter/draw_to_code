@@ -32,7 +32,7 @@ def find_circles(image, count_):
     final_list_of_circles = []
     max_amount_of_circles = 18
     if count_ != -1:
-        max_amount_of_circles = count_
+        max_amount_of_circles = int(count_)
     for indd in range(max_amount_of_circles):
         edges = canny(image, sigma=3, low_threshold=10, high_threshold=50)
         minim_radii = int(min(image.shape[0], image.shape[1])/20)

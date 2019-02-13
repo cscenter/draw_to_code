@@ -1,0 +1,12 @@
+{% extends "converter_page.html"%}
+
+{% block content %}
+<form action="" method="post" name="Circles">
+    {{form.hidden_tag()}}
+    <p>
+        Please enter number of circles:<br>
+        {{form.openid(size=80)}}<br>
+    </p>
+	<p>{{form.submit}}</p>
+</form>
+{% endblock %}

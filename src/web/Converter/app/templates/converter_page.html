@@ -6,14 +6,7 @@
 <body>
 Uploaded
 <img src="{{ url_for('static', filename=image_name)}}">
-<form action="" method="post" name="Circles">
-    {{form.hidden_tag()}}
-    <p>
-        Please enter number of circles:<br>
-        {{form.openid(size=80)}}<br>
-    </p>
-	<p>{{form.submit}}</p>
-</form>
+{% block content %}{% endblock %}
 
 </body>
 </html>	

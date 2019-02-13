@@ -8,9 +8,14 @@ from flask import send_from_directory
 from flask import render_template
 from app.forms import CircleNumberForm
 from app import app
-
+import sys
+# sys.path.insert(0, "..\\..\\..\\..\\")
+sys.path.insert(0, "C:\\Users\\Matvey Bezlepkin\\Documents\\GitProjects\\draw_to_code\\src")
+# print(sys.path)
+from Detecting_all import main
+# src/Detecting_all.py
 UPLOAD_FOLDER = 'static'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['bmp', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -38,4 +43,12 @@ def upload_file():
 def uploaded_file(filename):
     app.config.from_object('config')
     form = CircleNumberForm()
-    return render_template("converter_page.html", image_name=filename, form=form)
+    if form.validate_on_submit():
+        circle_num = int(form.openid.data)
+        return redirect(url_for('converting', filename=filename, circle_num=circle_num))
+    return render_template("converter_page_1.html", image_name=filename, form=form)
+
+@app.route('/converting/<filename>/<circle_num>', methods= ['GET', 'POST'])
+def converting(filename, circle_num):
+    tech_string = main(file_path="app/static/" + filename, count_circles=circle_num)
+    return render_template('converter_page_2.html', image_name=filename, circle_num=circle_num, tech_string=tech_string)

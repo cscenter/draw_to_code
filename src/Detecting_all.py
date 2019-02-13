@@ -15,8 +15,8 @@ from Project_to_circles import last_changes, unite_similar, normalize
 
 from skimage import data, io
 
-def main():
-    file_path = 'test_images/simple.png'
+def main(file_path='test_images/simple.png', count_circles=-1):
+    #file_path = 'test_images/simple.png'
     key = 2
     if key == 1:
         #image = io.imread(file_path)
@@ -44,7 +44,7 @@ def main():
     subtract = subtract_image(image_pil, image_detected_segm)
     subtract.show()
     image = np.array(subtract)
-    final_list_of_circles = find_circles(image, count_=1)
+    final_list_of_circles = find_circles(image, count_circles)
     final_list_of_segments = last_changes(final_list_of_segments, final_list_of_circles)
     final_list_of_segments = unite_similar(final_list_of_segments)
     final_list_of_segments, final_list_of_circles = normalize(max(image.shape[0], image.shape[1]), final_list_of_segments, final_list_of_circles)
@@ -65,6 +65,7 @@ def main():
     output_tex = open("output.tex", "w")
     output_tex.write(template_tex)
     output_tex.close()
+    return template_tex
 
 
 if __name__ == '__main__':
