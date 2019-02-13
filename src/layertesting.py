@@ -1,0 +1,56 @@
+import keras
+import keras.layers as L
+
+model = keras.models.Sequential()
+model.add(L.InputLayer(input_shape=[100, 100, 1]))
+
+print(model.output_shape)
+model.add(L.Conv2D(filters=100, kernel_size=(3, 3), strides=3))
+print(model.output_shape)
+model.add(L.BatchNormalization())
+print(model.output_shape)
+model.add(L.Activation('relu'))
+print(model.output_shape)
+model.add(L.Conv2D(filters=80, kernel_size=(3, 3)))
+print(model.output_shape)
+model.add(L.MaxPooling2D(pool_size=(2, 2)))
+print(model.output_shape)
+model.add(L.Activation('relu'))
+print(model.output_shape)
+model.add(L.Dropout(0.15))
+print(model.output_shape)
+model.add(L.Dense(900, input_shape=(100,), activation='relu'))
+print(model.output_shape)
+
+print("@@@@@")
+
+model.add(L.Conv2D(filters=20, kernel_size=(4, 4)))
+print(model.output_shape)
+model.add(L.MaxPooling2D(pool_size=(2, 2)))
+print(model.output_shape)
+model.add(L.Activation('relu'))
+print(model.output_shape)
+model.add(L.Dropout(0.15))
+print(model.output_shape)
+
+print("&&&&&")
+
+model.add(L.Conv2D(filters=20, kernel_size=(5, 5)))
+print(model.output_shape)
+model.add(L.BatchNormalization())
+print(model.output_shape)
+model.add(L.Activation('relu'))
+print(model.output_shape)
+
+print("$$$$$")
+
+model.add(L.Flatten())
+print(model.output_shape)
+model.add(L.Dense(900, activation='relu'))
+print(model.output_shape)
+model.add(L.Dropout(0.15))
+print(model.output_shape)
+model.add(L.Dense(200, activation='relu'))
+print(model.output_shape)
+model.add(L.Dropout(0.15))
+print(model.output_shape)

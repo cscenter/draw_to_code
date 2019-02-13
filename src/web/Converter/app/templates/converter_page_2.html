@@ -2,5 +2,13 @@
 
 {% block content %}
 <p> Number of circles: {{circle_num}}</p>
-<p> tech_version: {{tech_string}}</p>
+<p> <form action="" method="post" name="edit_text">
+        <p>
+            TEX code:<br>
+            <textarea id="tex_code" name="tex_code" cols=50 rows=50>{{str}}</textarea><br>
+        </p>
+        <p><input type="submit" value=""></p>
+    </form>
+<p><img src="{{ url_for('static', filename=image_name_2)}}"></p>
+</p>
 {% endblock %}

@@ -58,14 +58,17 @@ def unite_similar(final_list_of_segments):
     return new_list
 
 
-def normalize(size, final_list_of_segments, final_list_of_circles):
+def normalize(size, size1, final_list_of_segments, final_list_of_circles):
     size /= 20
     for i in range(len(final_list_of_segments)):
+        final_list_of_segments[i].point_1.x = size1 - final_list_of_segments[i].point_1.x
+        final_list_of_segments[i].point_2.x = size1 - final_list_of_segments[i].point_2.x
         final_list_of_segments[i].point_1.x /= size
         final_list_of_segments[i].point_1.y /= size
         final_list_of_segments[i].point_2.x /= size
         final_list_of_segments[i].point_2.y /= size
     for i in range(len(final_list_of_circles)):
+        final_list_of_circles[i].center.x = size1 - final_list_of_circles[i].center.x
         final_list_of_circles[i].center.x /= size
         final_list_of_circles[i].center.y /= size
         final_list_of_circles[i].radius /= size

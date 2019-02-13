@@ -37,21 +37,22 @@ def main(file_path='test_images/simple.png', count_circles=-1):
             Seg.point_2.y = tmp_px
         image = 255 - image
     image_detected_segm = draw_segments(image, final_list_of_segments)
-    fig, axis = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
-    axis.imshow(image_detected_segm)
-    plt.show()
+    #fig, axis = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
+    #axis.imshow(image_detected_segm)
+    #plt.show()
     image_pil = Image.fromarray(image)
     subtract = subtract_image(image_pil, image_detected_segm)
-    subtract.show()
+    #subtract.show()
     image = np.array(subtract)
     final_list_of_circles = find_circles(image, count_circles)
     final_list_of_segments = last_changes(final_list_of_segments, final_list_of_circles)
     final_list_of_segments = unite_similar(final_list_of_segments)
-    final_list_of_segments, final_list_of_circles = normalize(max(image.shape[0], image.shape[1]), final_list_of_segments, final_list_of_circles)
+    final_list_of_segments, final_list_of_circles = normalize(max(image.shape[0], image.shape[1]), image.shape[0], final_list_of_segments, final_list_of_circles)
     #print(.project_point_seg())
+
     template_tex = convert_to_latex(final_list_of_segments + final_list_of_circles)
-    to_pdf('rotated', template_tex, '')
-    output = PdfFileWriter()
+    to_pdf('output', template_tex, '')
+    '''output = PdfFileWriter()
     with open("rotated.pdf", "rb") as f:
         input_pdf = PdfFileReader(f)
         output_file = open("output.pdf", "wb")
@@ -61,7 +62,7 @@ def main(file_path='test_images/simple.png', count_circles=-1):
     os.remove('rotated.pdf')
     #os.remove('rotated.log')
     #os.remove('rotated.tex')
-    #os.remove('rotated.aux')
+    #os.remove('rotated.aux')'''
     output_tex = open("output.tex", "w")
     output_tex.write(template_tex)
     output_tex.close()

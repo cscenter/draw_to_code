@@ -56,14 +56,14 @@ class Segment(Figure):
         self.point_2 = point_2
 
     def to_tex(self):
-        s1 = "\\draw[line width=2pt] ({}, {}) -- ({}, {}); ".format(
-            self.point_1.x,
-            self.point_1.y,
-            self.point_2.x,
-            self.point_2.y
+        s1 = "\\draw[line width=2pt] ({}, {}) -- ({}, {}); \n".format(
+            round(self.point_1.y, 3),
+            round(self.point_1.x, 3),
+            round(self.point_2.y, 3),
+            round(self.point_2.x,3)
         )
-        s2 = "\\node[draw,circle,inner sep=2pt,fill] at ({}, {}) {{}}; ".format(self.point_1.x, self.point_1.y)
-        s3 = "\\node[draw,circle,inner sep=2pt,fill] at ({}, {}) {{}}; ".format(self.point_2.x, self.point_2.y)
+        s2 = "\\node[draw,circle,inner sep=2pt,fill] at ({}, {}) {{}}; \n".format(round(self.point_1.y,3), round(self.point_1.x, 3))
+        s3 = "\\node[draw,circle,inner sep=2pt,fill] at ({}, {}) {{}}; \n\n".format(round(self.point_2.y, 3), round(self.point_2.x,3))
         return s1 + s2 + s3
 
     def to_pil(self, draw, width=0, color=0):
@@ -133,10 +133,10 @@ class Circle(Figure):
         self.radius = radius
 
     def to_tex(self):
-        return "\\draw[line width=2pt] ({}, {}) circle ({});".format(
-            self.center.x,
-            self.center.y,
-            self.radius
+        return "\\draw[line width=2pt] ({}, {}) circle ({}); \n".format(
+            round(self.center.y,3),
+            round(self.center.x, 3),
+            round(self.radius, 3)
         )
 
     def to_pil(self, draw, width=0):
