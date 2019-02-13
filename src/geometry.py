@@ -1,6 +1,8 @@
 from math import atan2, hypot, pi, sin, cos, sqrt
 
 import numpy as np
+from sympy import Symbol, solve
+
 
 class Figure:
     def to_tex(self):
@@ -54,12 +56,15 @@ class Segment(Figure):
         self.point_2 = point_2
 
     def to_tex(self):
-        return "\\draw[line width=8mm] ({}, {}) -- ({}, {});".format(
+        s1 = "\\draw[line width=2pt] ({}, {}) -- ({}, {}); ".format(
             self.point_1.x,
             self.point_1.y,
             self.point_2.x,
             self.point_2.y
         )
+        s2 = "\\node[draw,circle,inner sep=2pt,fill] at ({}, {}) {{}}; ".format(self.point_1.x, self.point_1.y)
+        s3 = "\\node[draw,circle,inner sep=2pt,fill] at ({}, {}) {{}}; ".format(self.point_2.x, self.point_2.y)
+        return s1 + s2 + s3
 
     def to_pil(self, draw, width=0, color=0):
         xy = (self.point_1.x, self.point_1.y, self.point_2.x, self.point_2.y)
@@ -128,7 +133,7 @@ class Circle(Figure):
         self.radius = radius
 
     def to_tex(self):
-        return "\\draw[line width=8mm] ({}, {}) circle ({});".format(
+        return "\\draw[line width=2pt] ({}, {}) circle ({});".format(
             self.center.x,
             self.center.y,
             self.radius
@@ -147,6 +152,22 @@ class Circle(Figure):
             self.radius / image_size * 2
         ])
         return y
+
+    def project_point_seg(self, Seg : Segment, P : Point):
+        ll = Line.line_by_two_points(Seg.point_1, Seg.point_2)
+        #init_printing()
+        x = Symbol('x')
+        y = Symbol('y')
+        sett = solve([(x - self.center.x) ** 2 + (y - self.center.y) ** 2 - self.radius**2, ll.a * x + ll.b * y - ll.c], [x, y])
+        inters1_x = complex(sett[0][0]).real
+        inters1_y = complex(sett[0][1]).real
+        inters2_x = complex(sett[1][0]).real
+        inters2_y = complex(sett[1][1]).real
+        dist1 = Point.distance_between(Point(inters1_x, inters1_y), P)
+        dist2 = Point.distance_between(Point(inters2_x, inters2_y), P)
+        if dist1 < dist2:
+            return Point(inters1_x, inters1_y)
+        return Point(inters2_x, inters2_y)
 
     @staticmethod
     def construct_from_y(y, image_size):

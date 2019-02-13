@@ -11,19 +11,19 @@ from hough import find_segments as find_segments_1
 from latex_pic_generator import convert_to_latex
 from matplotlib import pyplot as plt
 from pic_generator import subtract_image
-from skimage import io
-from geometry import Point, Segment
+from Project_to_circles import last_changes, unite_similar, normalize
 
+from skimage import data, io
 
 def main():
-    file_path = 'test_images/test_64.png'
-    key = 1
+    file_path = 'test_images/simple.png'
+    key = 2
     if key == 1:
         #image = io.imread(file_path)
         image = pic_generator.load_image(file_path)
         image = np.array(image)
         # If use_sobel == 1, we add lines from Hough transform after Sobel filter. But it works slower
-        final_list_of_segments = find_segments(image, use_sobel=1)
+        final_list_of_segments = find_segments(image, use_sobel=0)
     else:
         image = pic_generator.load_image(file_path)
         image = np.array(ImageOps.invert(image))
@@ -44,7 +44,11 @@ def main():
     subtract = subtract_image(image_pil, image_detected_segm)
     subtract.show()
     image = np.array(subtract)
-    final_list_of_circles = find_circles(image)
+    final_list_of_circles = find_circles(image, count_=1)
+    final_list_of_segments = last_changes(final_list_of_segments, final_list_of_circles)
+    final_list_of_segments = unite_similar(final_list_of_segments)
+    final_list_of_segments, final_list_of_circles = normalize(max(image.shape[0], image.shape[1]), final_list_of_segments, final_list_of_circles)
+    #print(.project_point_seg())
     template_tex = convert_to_latex(final_list_of_segments + final_list_of_circles)
     to_pdf('rotated', template_tex, '')
     output = PdfFileWriter()
@@ -55,9 +59,9 @@ def main():
         output.write(output_file)
         output_file.close()
     os.remove('rotated.pdf')
-    os.remove('rotated.log')
-    os.remove('rotated.tex')
-    os.remove('rotated.aux')
+    #os.remove('rotated.log')
+    #os.remove('rotated.tex')
+    #os.remove('rotated.aux')
     output_tex = open("output.tex", "w")
     output_tex.write(template_tex)
     output_tex.close()

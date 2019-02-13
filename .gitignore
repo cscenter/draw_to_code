@@ -6,4 +6,5 @@
 *.iml
 *.aux
 *.log
+*.xml
 .idea
